@@ -8,6 +8,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         String line;
         String[] command;
+        SpaceMarineCollection collection = new SpaceMarineCollection();
 
 //        while (true) {
 //            try {
@@ -31,6 +32,11 @@ public class Main {
                 case "insert":
                     System.out.println("Please enter an element");
                     SpaceMarine spaceMarine = MyReader.getElementFromConsole(scanner);
+                    long id = 2;
+                    collection.add(id, spaceMarine);
+                    break;
+                case "info":
+                    collection.info();
                 case "exit":
                     exit = true;
                     break;

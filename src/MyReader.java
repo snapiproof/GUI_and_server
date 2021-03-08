@@ -21,25 +21,56 @@ public class MyReader {
         }
 
         System.out.println("Enter X coordinate (X is double and less than 131): ");
-        Double x = scanner.nextDouble();
+        Double x = Double.parseDouble(scanner.nextLine());
         System.out.println("Enter Y coordinate (Y is long and more than -448): ");
-        long y = scanner.nextLong();
+        long y = Long.parseLong(scanner.nextLine());
         Coordinates coordinates = new Coordinates(x, y);
 
         System.out.println("Enter health (Health is double and >0): ");
-        Double health = scanner.nextDouble();
+        Double health = Double.parseDouble(scanner.nextLine());
 
-        System.out.println("Choose type of vehicle: " + AstartesCategory.values());
-        AstartesCategory category = scanner.nextLine();
+        System.out.println("Choose type of AstartesCategory: " + AstartesCategory.show());
+        String tryCategory = scanner.nextLine();
+        AstartesCategory category;
+        try {
+            category = AstartesCategory.valueOf(tryCategory);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Exception");
+            category = null;
+        }
 
-        Weapon weaponType = scanner.nextLine();
 
-        MeleeWeapon meleeWeapon = scanner.nextLine();
+        System.out.println("Choose type of Weapon: " + Weapon.show());
+        String tryWeaponType = scanner.nextLine();
+        Weapon weaponType;
+        try {
+            weaponType = Weapon.valueOf(tryWeaponType);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Exception");
+            weaponType = null;
+        }
 
-        Chapter chapter = scanner.nextLine();
+        System.out.println("Choose type of MeleeWeapon: " + MeleeWeapon.show());
+        String tryMeleeWeapon = scanner.nextLine();
+        MeleeWeapon meleeWeapon;
+        try {
+            meleeWeapon = MeleeWeapon.valueOf(tryMeleeWeapon);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Exception");
+            meleeWeapon = null;
+        }
+
+        System.out.println("Chapter: String name");
+        String chapterName = scanner.nextLine();
+        System.out.println("Chapter: String parentLegion");
+        String parentLegion = scanner.nextLine();
+        System.out.println("Chapter: int marinesCount MaxCount = 1000");
+        int marinesCount = Integer.parseInt(scanner.nextLine());
+        Chapter chapter = new Chapter(chapterName, parentLegion, marinesCount);
+
+
 
         java.time.ZonedDateTime creationDate = ZonedDateTime.now();
-
         SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, meleeWeapon, chapter);
         return spaceMarine;
     }
