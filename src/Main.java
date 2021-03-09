@@ -12,6 +12,7 @@ public class Main {
 
         while (!exit) {
             System.out.println("Enter a command: ");
+            System.out.println("All commands : " + Commands.show());
             try {
                 line = scanner.nextLine().trim();
                 commands = line.split(" ");
