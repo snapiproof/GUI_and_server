@@ -8,4 +8,13 @@ public class Chapter {
         parentLegion = legion;
         marinesCount = x;
     }
+
+    @Override
+    public String toString() {
+        return "Chapter{" +
+                "name='" + name + '\'' +
+                ", parentLegion='" + parentLegion + '\'' +
+                ", marinesCount=" + marinesCount +
+                '}';
+    }
 }
