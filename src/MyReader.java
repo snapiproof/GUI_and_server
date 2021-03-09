@@ -1,4 +1,4 @@
-import sun.awt.geom.AreaOp;
+
 
 import java.time.ZonedDateTime;
 import java.util.Scanner;
@@ -31,46 +31,52 @@ public class MyReader {
 
         System.out.println("Choose type of AstartesCategory: " + AstartesCategory.show());
         String tryCategory = scanner.nextLine();
-        AstartesCategory category;
-        try {
-            category = AstartesCategory.valueOf(tryCategory);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Exception");
-            category = null;
+        AstartesCategory category = null;
+        while (category == null) {
+            try {
+                category = AstartesCategory.valueOf(tryCategory);
+            } catch (IllegalArgumentException e) {
+                System.out.println("There is no such category : " + tryCategory + "\n Try again");
+                tryCategory = scanner.nextLine();
+            }
         }
 
 
         System.out.println("Choose type of Weapon: " + Weapon.show());
         String tryWeaponType = scanner.nextLine();
-        Weapon weaponType;
-        try {
-            weaponType = Weapon.valueOf(tryWeaponType);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Exception");
-            weaponType = null;
+        Weapon weaponType = null;
+        while (weaponType == null) {
+            try {
+                weaponType = Weapon.valueOf(tryWeaponType);
+            } catch (IllegalArgumentException e) {
+                System.out.println("There is no such category : " + tryWeaponType + "\n Try again");
+                tryWeaponType = scanner.nextLine();
+            }
         }
 
         System.out.println("Choose type of MeleeWeapon: " + MeleeWeapon.show());
         String tryMeleeWeapon = scanner.nextLine();
-        MeleeWeapon meleeWeapon;
-        try {
-            meleeWeapon = MeleeWeapon.valueOf(tryMeleeWeapon);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Exception");
-            meleeWeapon = null;
+        MeleeWeapon meleeWeapon = null;
+        while (tryMeleeWeapon == null) {
+            try {
+                meleeWeapon = MeleeWeapon.valueOf(tryMeleeWeapon);
+            } catch (IllegalArgumentException e) {
+                System.out.println("There is no such category : " + tryMeleeWeapon + "\n Try again");
+                tryMeleeWeapon = scanner.nextLine();
+            }
         }
 
-        System.out.println("Chapter: String name");
+        System.out.println("Chapter part");
+        System.out.println("Enter a name of Chapter: ");
         String chapterName = scanner.nextLine();
-        System.out.println("Chapter: String parentLegion");
+        System.out.println("Enter a parent legion of Chapter: ");
         String parentLegion = scanner.nextLine();
-        System.out.println("Chapter: int marinesCount MaxCount = 1000");
+        System.out.println("Enter a marines count of Chapter (int marinesCount MaxCount = 1000): ");
         int marinesCount = Integer.parseInt(scanner.nextLine());
         Chapter chapter = new Chapter(chapterName, parentLegion, marinesCount);
 
-
-
         java.time.ZonedDateTime creationDate = ZonedDateTime.now();
+
         SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, meleeWeapon, chapter);
         return spaceMarine;
     }
