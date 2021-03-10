@@ -32,4 +32,15 @@ public class SpaceMarine {
                 ", chapter=" + chapter.toString() +
                 '}';
     }
+    public String toCsv(){
+        return name +
+                ", " + coordinates.toCsv() +
+                ", " + creationDate +
+                ", " + health +
+                ", " + category +
+                ", " + weaponType +
+                ", " + meleeWeapon +
+                ", " + chapter.toCsv();
+    }
+
 }

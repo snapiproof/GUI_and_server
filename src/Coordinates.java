@@ -14,4 +14,8 @@ public class Coordinates {
                 ", y=" + y +
                 '}';
     }
+    public String toCsv(){
+        return  x +
+                ", " + y;
+    }
 }

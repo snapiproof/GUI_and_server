@@ -17,4 +17,9 @@ public class Chapter {
                 ", marinesCount=" + marinesCount +
                 '}';
     }
+    public String toCsv(){
+        return name +
+                ", " + parentLegion +
+                ", " + marinesCount;
+    }
 }
