@@ -43,4 +43,7 @@ public class SpaceMarine {
                 ", " + chapter.toCsv();
     }
 
+    public Weapon getWeaponType() {
+        return weaponType;
+    }
 }

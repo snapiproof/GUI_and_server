@@ -1,21 +1,21 @@
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Scanner;
 
 public class Test {
 
     public static void main(String[] args) {
-        String text = ""; // строка для записи
-        try(FileOutputStream out=new FileOutputStream("note11s.txt");
-            BufferedOutputStream bos = new BufferedOutputStream(out))
-        {
-            // перевод строки в байты
-            byte[] buffer = text.getBytes();
-            bos.write(buffer, 0, buffer.length);
+        Map<String, Integer> map = new HashMap<>();
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            if ((int)pair.getValue() < 500) it.remove();
         }
-        catch(IOException ex){
 
-            System.out.println(ex.getMessage());
-        }
+
     }
 }

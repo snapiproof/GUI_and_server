@@ -13,18 +13,22 @@ public class SpaceMarineCollection {
 
     public void insert(Long key, SpaceMarine spaceMarine) {
         linkedHashMap.put(key, spaceMarine);
+        System.out.println("Element is inserted");
     }
 
     public void remove(Long key){
         linkedHashMap.remove(key);
+        System.out.println("Element was removed");
     }
 
     public void update(Long key, SpaceMarine spaceMarine){
         linkedHashMap.replace(key, spaceMarine);
+        System.out.println("Element is updated");
     }
 
     public void clear(){
         linkedHashMap.clear();
+        System.out.println("Collection is empty");
     }
 
     public void show(){
@@ -36,17 +40,18 @@ public class SpaceMarineCollection {
         }
     }
 
-    public void writeToFile(){
-        try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("notes.txt"))) {
-            String text;
-            for (SpaceMarine element: linkedHashMap) {
-                text = "" + element.getKey() + ", " + element.toCsv();
-                byte[] buffer = text.getBytes();
+    public void writeToFIle(String nameFile){
+        try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(nameFile))) {
+            Map<Long, SpaceMarine> map = linkedHashMap;
+            Iterator it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                String csv = "" + pair.getKey() + linkedHashMap.get(pair.getKey()).toCsv() + "";
+                byte[] buffer = csv.getBytes();
                 bos.write(buffer, 0, buffer.length);
             }
         } catch(IOException e){
             System.out.println(e.getMessage());
         }
     }
-
 }

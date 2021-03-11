@@ -43,7 +43,10 @@ public class Main {
                     collection.clear();
                     break;
                 case "save":
-                    System.out.println("It's not done yet");
+                    System.out.println("Enter a name of file: ");
+                    String file = scanner.nextLine();
+                    collection.writeToFIle(file);
+                    System.out.println("Collection is saved in " + file);
                     break;
                 case "exit":
                     exit = true;
