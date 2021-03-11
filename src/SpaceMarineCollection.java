@@ -49,6 +49,8 @@ public class SpaceMarineCollection {
                 String csv = "" + pair.getKey() + linkedHashMap.get(pair.getKey()).toCsv() + "";
                 byte[] buffer = csv.getBytes();
                 bos.write(buffer, 0, buffer.length);
+                System.out.println("Collection is saved in " + nameFile);
+
             }
         } catch(IOException e){
             System.out.println(e.getMessage());

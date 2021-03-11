@@ -8,9 +8,12 @@ public class Main {
         String line;
         String[] commands;
         SpaceMarineCollection collection = new SpaceMarineCollection();
-        long key;
 
         while (!exit) {
+
+            /**
+             * check correct input
+             * */
             System.out.println("Enter a command: ");
             try {
                 line = scanner.nextLine().trim();
@@ -20,6 +23,10 @@ public class Main {
                 System.out.println("You crashed scanner :( \n Bye-bye \n See you latter");
                 break;
             }
+
+            /**
+             * commands:
+             * */
             switch (command) {
                 case "help":
                     System.out.println("All commands : " + Commands.show());
@@ -43,14 +50,32 @@ public class Main {
                     collection.clear();
                     break;
                 case "save":
-                    System.out.println("Enter a name of file: ");
-                    String file = scanner.nextLine();
-                    collection.writeToFIle(file);
-                    System.out.println("Collection is saved in " + file);
+                    collection.writeToFIle(Console.inputFile(scanner));
+                    break;
+                case "execute_script":
+                    System.out.println("It's not done yet");
                     break;
                 case "exit":
                     exit = true;
                     System.out.println("You closed this program");
+                    break;
+                case "replace_if_lowe null":
+                    System.out.println("It's not done yet");
+                    break;
+                case "remove_greater_key":
+                    System.out.println("It's not done yet");
+                    break;
+                case "remove_lower_key":
+                    System.out.println("It's not done yet");
+                    break;
+                case "remove_any_by_health":
+                    System.out.println("It's not done yet");
+                    break;
+                case "group_counting_by_health":
+                    System.out.println("It's not done yet");
+                    break;
+                case "count_less_than_health":
+                    System.out.println("It's not done yet");
                     break;
                 default:
                     System.out.println("There is no command: " + command + "\nUse 'help' to see all commands");

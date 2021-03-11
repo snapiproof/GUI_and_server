@@ -2,6 +2,22 @@ import java.time.ZonedDateTime;
 import java.util.Scanner;
 
 public class Console {
+    public static String askFile(Scanner scanner){
+        System.out.println("Enter a name of file: ");
+        String file;
+        file = scanner.nextLine();
+        return file;
+    }
+    public static String inputFile(Scanner scanner){
+        String file;
+        while (true) {
+            System.out.println("Enter a name of file: ");
+                file = scanner.nextLine().trim();
+                break;
+        }
+        return file;
+    }
+
     public static long inputKey(Scanner scanner){
         long key;
         while (true) {
@@ -36,6 +52,7 @@ public class Console {
             }
             System.out.println("You failed. Try again!");
         }
+        name = '"' + name + '"';
 
         /**
          *
@@ -132,10 +149,26 @@ public class Console {
          * @param Chapter chapter
          * */
         System.out.println("Chapter part");
-        System.out.println("Enter a name of Chapter: ");
-        String chapterName = scanner.nextLine();
-        System.out.println("Enter a parent legion of Chapter: ");
-        String parentLegion = scanner.nextLine();
+        String chapterName;
+        while (true) {
+            System.out.println("Enter a name of Chapter: ");
+            chapterName = scanner.nextLine();
+            if (!chapterName.equals("")) {
+                break;
+            }
+            System.out.println("You failed. Try again!");
+        }
+        chapterName = '"' + chapterName + '"';
+        String parentLegion;
+        while (true) {
+            System.out.println("Enter a parent legion of Chapter: ");
+            parentLegion = scanner.nextLine();
+            if (!parentLegion.equals("")) {
+                break;
+            }
+            System.out.println("You failed. Try again!");
+        }
+        parentLegion = '"' + parentLegion + '"';
         System.out.println("Enter a marines count of Chapter (int marinesCount MaxCount = 1000): ");
         int marinesCount = Integer.parseInt(scanner.nextLine());
         Chapter chapter = new Chapter(chapterName, parentLegion, marinesCount);
