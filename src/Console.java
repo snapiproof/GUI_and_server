@@ -1,13 +1,124 @@
+import java.io.FileReader;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Console {
-    public static String askFile(Scanner scanner){
-        System.out.println("Enter a name of file: ");
-        String file;
-        file = scanner.nextLine();
-        return file;
+    public static SpaceMarineCollection startCollection(String nameFile, SpaceMarineCollection collection) throws Exception{
+        FileReader fr = new FileReader(nameFile);
+        Scanner file = new Scanner(fr);
+        String line;
+        while (file.hasNextLine()) {
+            try {
+                line = file.nextLine().trim();
+                if (line.equals("")){
+                    continue;
+                } else{
+                    String[] params = line.split(",");
+                    String stringKey = params[0];
+                    String name = params[1];
+                    double x = Double.parseDouble(params[2]);
+                    long y = Long.parseLong(params[3]);
+                    Coordinates coordinates = new Coordinates(x, y);
+                    double health = Double.parseDouble(params[4]);
+                    AstartesCategory category = AstartesCategory.valueOf(params[5]);
+                    Weapon weaponType = Weapon.valueOf(params[6]);
+                    MeleeWeapon melleWeapon = MeleeWeapon.valueOf(params[7]);
+                    String chapterName = params[8];
+                    String chapterParentLegion = params[9];
+                    int chapterMarinesCount = Integer.parseInt(params[10]);
+                    Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
+                    java.time.ZonedDateTime creationDate = ZonedDateTime.now();
+                    SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+                    collection.insert(stringKey, spaceMarine);
+                }
+            } catch (NoSuchElementException e) {
+                System.out.println("Collection has been downloading");
+                break;
+            }
+        }
+        return collection;
     }
+
+    public static boolean executeFile(String nameFile, SpaceMarineCollection collection) throws Exception{
+        boolean executeExit = false;
+        FileReader fr = new FileReader(nameFile);
+        Scanner file = new Scanner(fr);
+        String command;
+        String line;
+        String[] commands;
+        while (!executeExit){
+            try {
+                line = file.nextLine().trim();
+                commands = line.split(" ");
+                command = commands[0];
+            } catch (NoSuchElementException e) {
+                System.out.println("File has been executing");
+                break;
+            }
+            switch (command) {
+                case "help":
+                    System.out.println("All commands : " + Commands.show());
+                    break;
+                case "info":
+                    collection.info();
+                    break;
+                case "show":
+                    collection.show();
+                    break;
+                case "insert":
+                    collection.insert(commands[1], Console.getElementFromFile(commands[2]));
+                    break;
+                case "update":
+                    collection.update(commands[1], Console.getElementFromFile(commands[2]));
+                    break;
+                case "remove":
+                    collection.remove(commands[1]);
+                    break;
+                case "clear":
+                    collection.clear();
+                    break;
+                case "save":
+                    collection.writeToFIle(commands[1]);
+                    break;
+                case "execute_script":
+                    String nextExecuteFile = commands[1];
+                    if (nameFile.equals(nextExecuteFile)) throw new FileCycleException();
+                    executeFile(nextExecuteFile, collection);
+                    executeExit = Console.executeFile(commands[1], collection);
+                    break;
+                case "exit":
+                    executeExit = true;
+                    System.out.println("You closed this program");
+                    break;
+                case "replace_if_lowe null":
+                    System.out.println("It's not done yet");
+                    break;
+                case "remove_greater_key":
+                    System.out.println("It's not done yet");
+                    break;
+                case "remove_lower_key":
+                    System.out.println("It's not done yet");
+                    break;
+                case "remove_any_by_health":
+                    System.out.println("It's not done yet");
+                    break;
+                case "group_counting_by_health":
+                    System.out.println("It's not done yet");
+                    break;
+                case "count_less_than_health":
+                    System.out.println("It's not done yet");
+                    break;
+                default:
+                    System.out.println("There is no command: " + command + "\nUse 'help' to see all commands");
+                    break;
+            }
+        }
+        fr.close();
+        return executeExit;
+    }
+
     public static String inputFile(Scanner scanner){
         String file;
         while (true) {
@@ -18,22 +129,40 @@ public class Console {
         return file;
     }
 
-    public static long inputKey(Scanner scanner){
-        long key;
-        while (true) {
-            System.out.println("Enter key: ");
-            try {
-                key = Long.parseLong(scanner.nextLine());
-                break;
-            } catch (NumberFormatException e) {
-                System.out.println("Incorrect enter! Try again.");
-            }
-        }
-        return key;
+//    public static long inputKey(Scanner scanner){
+//        long key;
+//        while (true) {
+//            System.out.println("Enter key: ");
+//            try {
+//                key = Long.parseLong(scanner.nextLine());
+//                break;
+//            } catch (NumberFormatException e) {
+//                System.out.println("Incorrect enter! Try again.");
+//            }
+//        }
+//        return key;
+//    }
+    public static SpaceMarine getElementFromFile(String element) {
+        String[] params = element.split(",");
+        String name = params[0];
+        double x = Double.parseDouble(params[1]);
+        long y = Long.parseLong(params[2]);
+        Coordinates coordinates = new Coordinates(x, y);
+        double health = Double.parseDouble(params[3]);
+        AstartesCategory category = AstartesCategory.valueOf(params[4]);
+        Weapon weaponType = Weapon.valueOf(params[5]);
+        MeleeWeapon melleWeapon = MeleeWeapon.valueOf(params[6]);
+        String chapterName = params[7];
+        String chapterParentLegion = params[8];
+        int chapterMarinesCount = Integer.parseInt(params[9]);
+        Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
+        java.time.ZonedDateTime creationDate = ZonedDateTime.now();
+        SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+        return spaceMarine;
     }
 
     /**
-     * @param scanner
+     *
      * @return element SpaceMarine
      */
     public static SpaceMarine getElement(Scanner scanner) {

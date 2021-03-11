@@ -9,12 +9,18 @@ import java.util.Scanner;
 public class Test {
 
     public static void main(String[] args) {
-        Map<String, Integer> map = new HashMap<>();
-        Iterator it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            if ((int)pair.getValue() < 500) it.remove();
-        }
+        Scanner sc = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println((scanner.equals(null)));
+        System.out.println((scanner.equals(scanner)));
+
+        scanner.close();
+        System.out.println((scanner.equals(null)));
+        System.out.println((scanner.equals(scanner)));
+
+
+
+
 
 
     }

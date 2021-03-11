@@ -1,13 +1,14 @@
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         boolean exit = false;
         Scanner scanner = new Scanner(System.in);
         String command;
         String line;
         String[] commands;
         SpaceMarineCollection collection = new SpaceMarineCollection();
+        collection = Console.startCollection(Console.inputFile(scanner), collection);
 
         while (!exit) {
 
@@ -38,22 +39,22 @@ public class Main {
                     collection.show();
                     break;
                 case "insert":
-                    collection.insert(Console.inputKey(scanner), Console.getElement(scanner));
+                    collection.insert(commands[1], Console.getElement(scanner));
                     break;
                 case "update":
-                    collection.update(Console.inputKey(scanner), Console.getElement(scanner));
+                    collection.update(commands[1], Console.getElement(scanner));
                     break;
                 case "remove":
-                    collection.remove(Console.inputKey(scanner));
+                    collection.remove(commands[1]);
                     break;
                 case "clear":
                     collection.clear();
                     break;
                 case "save":
-                    collection.writeToFIle(Console.inputFile(scanner));
+                    collection.writeToFIle(commands[1]);
                     break;
                 case "execute_script":
-                    System.out.println("It's not done yet");
+                    exit = Console.executeFile(commands[1], collection);
                     break;
                 case "exit":
                     exit = true;
