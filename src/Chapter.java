@@ -1,12 +1,18 @@
 public class Chapter {
-    private String name; //Поле не может быть null, Строка не может быть пустой
-    private String parentLegion;
-    private int marinesCount; //Значение поля должно быть больше 0, Максимальное значение поля: 1000
+    private final String name; //Поле не может быть null, Строка не может быть пустой
+    private final String parentLegion;
+    private final int marinesCount; //Значение поля должно быть больше 0, Максимальное значение поля: 1000
+    public static final int MaxMarinesCount = 1001;
+    public static final int MinMarinesCount = 0;
 
     public Chapter(String chapterName, String legion, int x){
         name = chapterName;
         parentLegion = legion;
         marinesCount = x;
+    }
+
+    public int getMarinesCount() {
+        return marinesCount;
     }
 
     @Override

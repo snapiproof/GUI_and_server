@@ -8,6 +8,7 @@ public class SpaceMarine {
     private final Weapon weaponType; //Поле не может быть null
     private final MeleeWeapon meleeWeapon; //Поле может быть null
     private final Chapter chapter; //Поле не может быть null
+    public static final Double MinHealth = 0.0;
 
     public SpaceMarine(long id, String name, Coordinates coordinates, java.time.ZonedDateTime creationDate, Double health, AstartesCategory category, Weapon weaponType, MeleeWeapon meleeWeapon, Chapter chapter) {
         this.id = id;
@@ -19,6 +20,10 @@ public class SpaceMarine {
         this.coordinates = coordinates;
         this.health = health;
         this.weaponType = weaponType;
+    }
+
+    public Double getMinHealth() {
+        return MinHealth;
     }
 
     @Override
@@ -40,6 +45,10 @@ public class SpaceMarine {
         return id;
     }
 
+    public int getMarinesCount() {
+        return chapter.getMarinesCount();
+    }
+
     public String toCsv(){
         return name +
                 ", " + coordinates.toCsv() +
@@ -53,5 +62,9 @@ public class SpaceMarine {
 
     public Weapon getWeaponType() {
         return weaponType;
+    }
+
+    public Double getHealth() {
+        return health;
     }
 }

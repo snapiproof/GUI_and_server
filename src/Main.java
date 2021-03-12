@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Main {
@@ -8,7 +9,11 @@ public class Main {
         String line;
         String[] commands;
         SpaceMarineCollection collection = new SpaceMarineCollection();
-        collection = Console.startCollection(Console.inputFile(scanner), collection);
+        try {
+            collection = Console.startCollection(Console.inputFile(scanner), collection);
+        }catch(FileNotFoundException e){
+            System.out.println("File not found. Collection is empty.");
+        }
 
         while (!exit) {
 
@@ -61,23 +66,23 @@ public class Main {
                         exit = true;
                         System.out.println("You closed this program");
                         break;
-                    case "replace_if_lowe null":
-                        System.out.println("It's not done yet");
+                    case "replace_if_lowe":
+                        collection.replace_if_lowe(commands[1], Console.getElement(scanner));
                         break;
                     case "remove_greater_key":
-                        System.out.println("It's not done yet");
+                        collection.remove_greater_key(commands[1]);
                         break;
                     case "remove_lower_key":
-                        System.out.println("It's not done yet");
+                        collection.remove_lower_key(commands[1]);
                         break;
                     case "remove_any_by_health":
-                        System.out.println("It's not done yet");
+                        collection.remove_any_by_health(commands[1]);
                         break;
                     case "group_counting_by_health":
-                        System.out.println("It's not done yet");
+                        collection.group_counting_by_health();
                         break;
                     case "count_less_than_health":
-                        System.out.println("It's not done yet");
+                        collection.count_less_than_health(commands[1]);
                         break;
                     default:
                         System.out.println("There is no command: " + command + "\nUse 'help' to see all commands");

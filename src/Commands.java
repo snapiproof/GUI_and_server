@@ -2,12 +2,19 @@ public enum Commands {
     HELP("help"),
     INFO("info"),
     SHOW("show"),
-    INSERT("insert"),
-    UPDATE("update"),
-    REMOVE("remove"),
+    INSERT("insert key"),
+    UPDATE("update id"),
+    REMOVE("remove key"),
     CLEAR("clear"),
-    SAVE("save"),
-    EXIT("exit");
+    SAVE("save file"),
+    EXECUTE("execute_script file"),
+    EXIT("exit"),
+    replace_if_lowe("replace_if_lowe key"),
+    remove_greater_key("remove_greater_key key"),
+    remove_lower_key("remove_lower_key key"),
+    remove_any_by_health("remove_any_by_health health"),
+    group_counting_by_health("group_counting_by_health"),
+    count_less_than_health("count_less_than_health health");
 
     private final String name;
 

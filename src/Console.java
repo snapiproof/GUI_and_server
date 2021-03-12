@@ -1,6 +1,5 @@
 import java.io.FileReader;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -19,27 +18,30 @@ public class Console {
         while (file.hasNextLine()) {
             try {
                 line = file.nextLine().trim();
-                if (line.equals("")){
-                    continue;
-                } else{
-                    String[] params = line.split(",");
-                    String stringKey = params[0];
-                    String name = params[1];
-                    double x = Double.parseDouble(params[2]);
-                    long y = Long.parseLong(params[3]);
-                    Coordinates coordinates = new Coordinates(x, y);
-                    double health = Double.parseDouble(params[4]);
-                    AstartesCategory category = AstartesCategory.valueOf(params[5]);
-                    Weapon weaponType = Weapon.valueOf(params[6]);
-                    MeleeWeapon melleWeapon = MeleeWeapon.valueOf(params[7]);
-                    String chapterName = params[8];
-                    String chapterParentLegion = params[9];
-                    int chapterMarinesCount = Integer.parseInt(params[10]);
-                    Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
-                    long id = Console.createID();
-                    java.time.ZonedDateTime creationDate = ZonedDateTime.now();
-                    SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
-                    collection.insert(stringKey, spaceMarine);
+                if (!line.equals("")){
+                    try {
+                        String[] params = line.split(",");
+                        String stringKey = params[0];
+                        String name = params[1];
+                        double x = Double.parseDouble(params[2]);
+                        long y = Long.parseLong(params[3]);
+                        Coordinates coordinates = new Coordinates(x, y);
+                        double health = Double.parseDouble(params[4]);
+                        AstartesCategory category = AstartesCategory.valueOf(params[5]);
+                        Weapon weaponType = Weapon.valueOf(params[6]);
+                        MeleeWeapon melleWeapon = MeleeWeapon.valueOf(params[7]);
+                        String chapterName = params[8];
+                        String chapterParentLegion = params[9];
+                        int chapterMarinesCount = Integer.parseInt(params[10]);
+                        Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
+                        long id = Console.createID();
+                        java.time.ZonedDateTime creationDate = ZonedDateTime.now();
+                        SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+                        collection.insert(stringKey, spaceMarine);
+                    }catch (ArrayIndexOutOfBoundsException e){
+                        System.out.println("Incorrect input. Collection is empty");
+                        break;
+                    }
                 }
             } catch (NoSuchElementException e) {
                 System.out.println("Collection has been downloading");
@@ -56,7 +58,7 @@ public class Console {
         String command;
         String line;
         String[] commands;
-        while (!executeExit){
+        while (!executeExit) {
             try {
                 line = file.nextLine().trim();
                 commands = line.split(" ");
@@ -65,62 +67,66 @@ public class Console {
                 System.out.println("File has been executing");
                 break;
             }
-            switch (command) {
-                case "help":
-                    System.out.println("All commands : " + Commands.show());
-                    break;
-                case "info":
-                    collection.info();
-                    break;
-                case "show":
-                    collection.show();
-                    break;
-                case "insert":
-                    collection.insert(commands[1], Console.getElementFromFile(commands[2]));
-                    break;
-                case "update":
-                    collection.update(commands[1], Console.getElementFromFile(commands[2]));
-                    break;
-                case "remove":
-                    collection.remove(commands[1]);
-                    break;
-                case "clear":
-                    collection.clear();
-                    break;
-                case "save":
-                    collection.writeToFIle(commands[1]);
-                    break;
-                case "execute_script":
-                    String nextExecuteFile = commands[1];
-                    if (nameFile.equals(nextExecuteFile)) throw new FileCycleException();
-                    executeFile(nextExecuteFile, collection);
-                    executeExit = Console.executeFile(commands[1], collection);
-                    break;
-                case "exit":
-                    executeExit = true;
-                    System.out.println("You closed this program");
-                    break;
-                case "replace_if_lowe null":
-                    System.out.println("It's not done yet");
-                    break;
-                case "remove_greater_key":
-                    System.out.println("It's not done yet");
-                    break;
-                case "remove_lower_key":
-                    System.out.println("It's not done yet");
-                    break;
-                case "remove_any_by_health":
-                    System.out.println("It's not done yet");
-                    break;
-                case "group_counting_by_health":
-                    System.out.println("It's not done yet");
-                    break;
-                case "count_less_than_health":
-                    System.out.println("It's not done yet");
-                    break;
-                default:
-                    System.out.println("There is no command: " + command + "\nUse 'help' to see all commands");
-                    break;
+            try {
+                switch (command) {
+                    case "help":
+                        System.out.println("All commands : " + Commands.show());
+                        break;
+                    case "info":
+                        collection.info();
+                        break;
+                    case "show":
+                        collection.show();
+                        break;
+                    case "insert":
+                        collection.insert(commands[1], Console.getElementFromFile(commands[2]));
+                        break;
+                    case "update":
+                        collection.update(commands[1], Console.getElementFromFile(commands[2]));
+                        break;
+                    case "remove":
+                        collection.remove(commands[1]);
+                        break;
+                    case "clear":
+                        collection.clear();
+                        break;
+                    case "save":
+                        collection.writeToFIle(commands[1]);
+                        break;
+                    case "execute_script":
+                        String nextExecuteFile = commands[1];
+                        if (nameFile.equals(nextExecuteFile)) throw new FileCycleException();
+                        executeFile(nextExecuteFile, collection);
+                        executeExit = Console.executeFile(commands[1], collection);
+                        break;
+                    case "exit":
+                        executeExit = true;
+                        System.out.println("You closed this program");
+                        break;
+                    case "replace_if_lowe null":
+                        collection.replace_if_lowe(commands[1], getElementFromFile(commands[2]));
+                        break;
+                    case "remove_greater_key":
+                        collection.remove_greater_key(commands[1]);
+                        break;
+                    case "remove_lower_key":
+                        collection.remove_lower_key(commands[1]);
+                        break;
+                    case "remove_any_by_health":
+                        collection.remove_any_by_health(commands[1]);
+                        break;
+                    case "group_counting_by_health":
+                        collection.group_counting_by_health();
+                        break;
+                    case "count_less_than_health":
+                        collection.count_less_than_health(commands[1]);
+                        break;
+                    default:
+                        System.out.println("There is no command: " + command + "\nUse 'help' to see all commands");
+                        break;
+                }
+            }catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println("Incorrect input. Try again.");
             }
         }
         fr.close();
@@ -138,23 +144,28 @@ public class Console {
     }
 
     public static SpaceMarine getElementFromFile(String element) {
-        String[] params = element.split(",");
-        String name = params[0];
-        double x = Double.parseDouble(params[1]);
-        long y = Long.parseLong(params[2]);
-        Coordinates coordinates = new Coordinates(x, y);
-        double health = Double.parseDouble(params[3]);
-        AstartesCategory category = AstartesCategory.valueOf(params[4]);
-        Weapon weaponType = Weapon.valueOf(params[5]);
-        MeleeWeapon melleWeapon = MeleeWeapon.valueOf(params[6]);
-        String chapterName = params[7];
-        String chapterParentLegion = params[8];
-        int chapterMarinesCount = Integer.parseInt(params[9]);
-        Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
-        long id = Console.createID();
-        java.time.ZonedDateTime creationDate = ZonedDateTime.now();
-        SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
-        return spaceMarine;
+        try {
+            String[] params = element.split(",");
+            String name = params[0];
+            double x = Double.parseDouble(params[1]);
+            long y = Long.parseLong(params[2]);
+            Coordinates coordinates = new Coordinates(x, y);
+            double health = Double.parseDouble(params[3]);
+            AstartesCategory category = AstartesCategory.valueOf(params[4]);
+            Weapon weaponType = Weapon.valueOf(params[5]);
+            MeleeWeapon melleWeapon = MeleeWeapon.valueOf(params[6]);
+            String chapterName = params[7];
+            String chapterParentLegion = params[8];
+            int chapterMarinesCount = Integer.parseInt(params[9]);
+            Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
+            long id = Console.createID();
+            java.time.ZonedDateTime creationDate = ZonedDateTime.now();
+            SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+            return spaceMarine;
+        } catch(ArrayIndexOutOfBoundsException e){
+            System.out.println("incorrect element");
+            return null;
+        }
     }
 
     /**
@@ -164,10 +175,7 @@ public class Console {
     public static SpaceMarine getElement(Scanner scanner) {
         System.out.println("New element");
 
-        /**
-         *
-         * @param String name
-         * */
+        // initialisation a String name of element
         String name;
         while (true) {
             System.out.println("Enter the name:");
@@ -179,18 +187,18 @@ public class Console {
         }
         name = '"' + name + '"';
 
-        /**
-         *
-         * @param Coordinates coordinates
-         * */
-        Double x;
-        while (true) {
+
+         //initialisation a Coordinates coordinates of element
+        Double x = null;
+        while (x == null) {
             System.out.println("Enter X coordinate (X is double and less than 131): ");
             try {
                 x = Double.parseDouble(scanner.nextLine());
-                break;
+                if (x > Coordinates.MaxX){
+                    x = null;
+                }else break;
             }catch (NumberFormatException e) {
-                System.out.println("Incorrect enter! Try again.");
+                System.out.println("Incorrect input! Try again.");
             }
         }
         long y;
@@ -198,32 +206,33 @@ public class Console {
             System.out.println("Enter Y coordinate (Y is long and more than -448): ");
             try {
                 y = Long.parseLong(scanner.nextLine());
-                break;
+                if (y > Coordinates.MinY){
+                    break;
+                }
             } catch (NumberFormatException e) {
-                System.out.println("Incorrect enter! Try again.");
+                System.out.println("Incorrect input! Try again.");
             }
         }
         Coordinates coordinates = new Coordinates(x, y);
 
-        /**
-         *
-         * @param Double health
-         * */
-        Double health;
+        // initialisation a Double health of element
+        Double health = 0.0;
         while (true) {
             System.out.println("Enter health (Health is double and more than 0): ");
             try {
                 health = Double.parseDouble(scanner.nextLine());
-                break;
+                if (health > 0) {
+                    break;
+                } else{
+                    System.out.println("Health is more than 0");
+                }
             } catch (NumberFormatException e) {
-                System.out.println("Incorrect enter! Try again.");
+                System.out.println("Incorrect input. Health = null");
+                break;
             }
         }
 
-        /**
-         *
-         * @param AstartesCategory category
-         * */
+        //initialisation AstartesCategory category of element
         System.out.println("Choose type of AstartesCategory: " + AstartesCategory.show());
         String tryCategory = scanner.nextLine();
         AstartesCategory category = null;
@@ -236,10 +245,7 @@ public class Console {
             }
         }
 
-        /**
-         *
-         * @param Weapon weapon
-         * */
+        //initialisation Weapon weaponType of element
         System.out.println("Choose type of Weapon: " + Weapon.show());
         String tryWeaponType = scanner.nextLine();
         Weapon weaponType = null;
@@ -252,10 +258,7 @@ public class Console {
             }
         }
 
-        /**
-         *
-         * @param MeleeWeapon meleeWeapon
-         * */
+        // initialisation MeleeWeapon meleeWeapon of element
         System.out.println("Choose type of MeleeWeapon: " + MeleeWeapon.show());
         String tryMeleeWeapon = scanner.nextLine();
         MeleeWeapon meleeWeapon = null;
@@ -268,11 +271,7 @@ public class Console {
             }
         }
 
-
-        /**
-         *
-         * @param Chapter chapter
-         * */
+        //initialisation a Chapter of element
         System.out.println("Chapter part");
         String chapterName;
         while (true) {
@@ -294,18 +293,27 @@ public class Console {
             System.out.println("You failed. Try again!");
         }
         parentLegion = '"' + parentLegion + '"';
-        System.out.println("Enter a marines count of Chapter (int marinesCount MaxCount = 1000): ");
-        int marinesCount = Integer.parseInt(scanner.nextLine());
+        int marinesCount;
+        while (true) {
+            try {
+                System.out.println("Enter a marines count of Chapter (int marinesCount MaxCount = 1000): ");
+                marinesCount = Integer.parseInt(scanner.nextLine());
+                if ((marinesCount > Chapter.MinMarinesCount) && (marinesCount < Chapter.MaxMarinesCount)) {
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Incorrect input. Try again");
+            }
+        }
         Chapter chapter = new Chapter(chapterName, parentLegion, marinesCount);
 
+        //initialisation ID of element
         long id = Console.createID();
 
-        /**
-         *
-         * @param creationDate
-         * */
+        // initialisation java.time.ZonedDateTime creationDate of element
         java.time.ZonedDateTime creationDate = ZonedDateTime.now();
 
+        // java.time.ZonedDateTime of element
         SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, meleeWeapon, chapter);
         return spaceMarine;
     }
