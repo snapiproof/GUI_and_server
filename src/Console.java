@@ -5,6 +5,13 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Console {
+    private static long idCounter = 1;
+
+    private static synchronized long createID()
+    {
+        return (idCounter++);
+    }
+
     public static SpaceMarineCollection startCollection(String nameFile, SpaceMarineCollection collection) throws Exception{
         FileReader fr = new FileReader(nameFile);
         Scanner file = new Scanner(fr);
@@ -29,8 +36,9 @@ public class Console {
                     String chapterParentLegion = params[9];
                     int chapterMarinesCount = Integer.parseInt(params[10]);
                     Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
+                    long id = Console.createID();
                     java.time.ZonedDateTime creationDate = ZonedDateTime.now();
-                    SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+                    SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
                     collection.insert(stringKey, spaceMarine);
                 }
             } catch (NoSuchElementException e) {
@@ -129,19 +137,6 @@ public class Console {
         return file;
     }
 
-//    public static long inputKey(Scanner scanner){
-//        long key;
-//        while (true) {
-//            System.out.println("Enter key: ");
-//            try {
-//                key = Long.parseLong(scanner.nextLine());
-//                break;
-//            } catch (NumberFormatException e) {
-//                System.out.println("Incorrect enter! Try again.");
-//            }
-//        }
-//        return key;
-//    }
     public static SpaceMarine getElementFromFile(String element) {
         String[] params = element.split(",");
         String name = params[0];
@@ -156,8 +151,9 @@ public class Console {
         String chapterParentLegion = params[8];
         int chapterMarinesCount = Integer.parseInt(params[9]);
         Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
+        long id = Console.createID();
         java.time.ZonedDateTime creationDate = ZonedDateTime.now();
-        SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+        SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
         return spaceMarine;
     }
 
@@ -302,13 +298,15 @@ public class Console {
         int marinesCount = Integer.parseInt(scanner.nextLine());
         Chapter chapter = new Chapter(chapterName, parentLegion, marinesCount);
 
+        long id = Console.createID();
+
         /**
          *
          * @param creationDate
          * */
         java.time.ZonedDateTime creationDate = ZonedDateTime.now();
 
-        SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, meleeWeapon, chapter);
+        SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, meleeWeapon, chapter);
         return spaceMarine;
     }
 }

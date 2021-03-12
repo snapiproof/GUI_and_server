@@ -35,13 +35,27 @@ public class SpaceMarineCollection {
         }
     }
 
-    public void update(String stringKey, SpaceMarine spaceMarine){
-        long key;
+    public void update(String stringID, SpaceMarine spaceMarine){
+        long id;
+        long key = 0;
+        boolean check = false;
         try {
-            key = Long.parseLong(stringKey);
-            linkedHashMap.replace(key, spaceMarine);
-            System.out.println("Element is updated");
-        } catch (NumberFormatException e) {
+            id = Long.parseLong(stringID);
+            Map<Long, SpaceMarine> map = linkedHashMap;
+            for (Map.Entry<Long, SpaceMarine> entry : map.entrySet()) {
+                if (Objects.equals(id, map.get(entry.getKey()).getId())) {
+                    key = entry.getKey();
+                    check = true;
+                }
+            }
+
+            if (check) {
+                linkedHashMap.replace(key, spaceMarine);
+                System.out.println("Element is updated");
+            }else {
+                System.out.println("There is no element with ID: " + stringID);
+            }
+        }catch(NumberFormatException e){
             System.out.println("Incorrect enter! Try again.");
         }
     }
@@ -56,7 +70,7 @@ public class SpaceMarineCollection {
         Set set = linkedHashMap.entrySet();
         for (Object element: set) {
             Map.Entry mapEntry = (Map.Entry) element;
-            System.out.println("ID: " + mapEntry.getKey() + ", " + mapEntry.getValue().toString());
+            System.out.println(mapEntry.getValue().toString());
         }
     }
 
