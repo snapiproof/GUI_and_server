@@ -18,9 +18,7 @@ public class Main {
 
         while (!exit) {
 
-            /**
-             * check correct input
-             * */
+             //check correct input
             System.out.println("Enter a command: ");
             try {
                 line = scanner.nextLine().trim();
@@ -31,9 +29,7 @@ public class Main {
                 break;
             }
 
-            /**
-             * commands:
-                 * */
+            //commands:
             try {
                 switch (command) {
                     case "help":

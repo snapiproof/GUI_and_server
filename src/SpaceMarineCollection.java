@@ -1,4 +1,5 @@
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -115,6 +116,7 @@ public class SpaceMarineCollection {
         try {
             health = Double.parseDouble(stringHealth);
             Set set = linkedHashMap.entrySet();
+
             for (Object element : set) {
                 Map.Entry mapEntry = (Map.Entry) element;
                 if ( linkedHashMap.get(mapEntry.getKey()).getHealth() == health) {
@@ -182,19 +184,35 @@ public class SpaceMarineCollection {
     }
 
     public void writeToFIle(String nameFile){
-        try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(nameFile))) {
-            Map<Long, SpaceMarine> map = linkedHashMap;
-            Iterator it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
-                String csv = "" + pair.getKey() + linkedHashMap.get(pair.getKey()).toCsv() + "";
-                byte[] buffer = csv.getBytes();
-                bos.write(buffer, 0, buffer.length);
-                System.out.println("Collection is saved in " + nameFile);
-
+        File f = new File(nameFile);
+        if(f.exists()) {
+            System.out.println("File exists. File will reset. Are you sure you want do it? \n Enter '1' if you want or something else if you don't want.");
+            Scanner Check = new Scanner(System.in);
+            String check = Check.nextLine();
+            int save;
+            try{
+                save = Integer.parseInt(check);
+            }catch(NumberFormatException e){
+                save = 0;
             }
-        } catch(IOException e){
-            System.out.println(e.getMessage());
+            if (save == 1) {
+                try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(nameFile))) {
+                    Map<Long, SpaceMarine> map = linkedHashMap;
+                    Iterator it = map.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry pair = (Map.Entry) it.next();
+                        String csv = "" + pair.getKey() + linkedHashMap.get(pair.getKey()).toCsv() + "";
+                        byte[] buffer = csv.getBytes();
+                        bos.write(buffer, 0, buffer.length);
+                        System.out.println("Collection is saved in " + nameFile);
+
+                    }
+                } catch(IOException e){
+                    System.out.println(e.getMessage());
+                }
+            }else {
+                System.out.println("Collection didn't save");
+            }
         }
     }
 }
