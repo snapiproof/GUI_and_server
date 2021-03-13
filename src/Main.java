@@ -9,8 +9,9 @@ public class Main {
         String line;
         String[] commands;
         SpaceMarineCollection collection = new SpaceMarineCollection();
+
         try {
-            collection = Console.startCollection(Console.inputFile(scanner), collection);
+            collection = Console.startCollection(System.getenv("START_FILE"), collection);
         }catch(FileNotFoundException e){
             System.out.println("File not found. Collection is empty.");
         }
