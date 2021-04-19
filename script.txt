@@ -1,0 +1,6 @@
+insert 22 name,2,2,2,AGGRESSOR,FLAMER,MANREAPER,chap,leg,2
+show
+save
+exit
+info 
+help
