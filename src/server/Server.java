@@ -13,8 +13,6 @@ public class Server {
     public final static int SERVICE_PORT=5000;
     private DatagramSocket socket;
     private InetAddress address;
-    byte[] receivingDataBuffer = new byte[1024];
-    byte[] sendingDataBuffer = new byte[1024];
     private int port;
     private SpaceMarineCollection collection;
 

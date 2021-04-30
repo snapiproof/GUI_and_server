@@ -10,6 +10,10 @@ public class SpaceMarineCollection {
 
     private final Map<Long, SpaceMarine> linkedHashMap = new LinkedHashMap<>();
 
+    public String help(){
+        return "All commands : " + Commands.show();
+    }
+
     public String info() {
         return ("Type of collection is " + linkedHashMap.getClass().toString() + ". Size of collection is " + linkedHashMap.size());
     }

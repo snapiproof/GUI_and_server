@@ -35,9 +35,6 @@ public class Client {
             clientChannel.configureBlocking(false);
             selector = Selector.open();
             clientChannel.register(selector, SelectionKey.OP_WRITE);
-            send(new CommandForServer<>("askID", ""));
-            long id = Long.parseLong(receive().getMessage());
-            Console Console = new Console(id);
 
                 boolean exit = false;
                     String[] commands;
