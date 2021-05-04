@@ -20,76 +20,76 @@ public class Server {
         this.collection = collection;
     }
 
-    public void run(){
-        try {
-
-                try {
-                    collection = Console.startCollection("collection.csv", collection);
-                    System.out.println("Collection was uploaded");
-                }catch(FileNotFoundException e){
-                    System.out.println("File not found. Collection is empty.");
-                }
-                boolean exit = false;
-                ServerConsole console = new ServerConsole(collection, exit);
-                console.start();
-                socket = new DatagramSocket(SERVICE_PORT);
-                System.out.println("Server was open");
-
-                while (!exit){
-                    CommandForServer command = getCommand();
-                    switch (command.getCommandName().split(" ")[0]){
-                        case "askID":
-                            send(new MessageForClient(String.valueOf(Console.getID())));
-                            break;
-                        case "help":
-                            send(new MessageForClient("All commands : " + Commands.show()));
-                            break;
-                        case "info":
-                            send(new MessageForClient(collection.info()));
-                            break;
-                        case "show":
-                            send(new MessageForClient(collection.show()));
-                            break;
-                        case "insert":
-                            send(new MessageForClient(collection.insert(command.getCommandName().split(" ")[1], (SpaceMarine)command.getArgument())));
-                            break;
-                        case "update":
-                            send(new MessageForClient(collection.update(command.getCommandName().split(" ")[1], (SpaceMarine) command.getArgument())));
-                            break;
-                        case "remove":
-                            send(new MessageForClient(collection.remove(command.getCommandName().split(" ")[1])));
-                            break;
-                        case "clear":
-                            send(new MessageForClient(collection.clear()));
-                            break;
-                        case "execute_script":
-                            send(new MessageForClient(Console.executeFile(command.getCommandName().split(" ")[1], collection)));
-                            break;
-                        case "replace_if_lowe":
-                            send(new MessageForClient(collection.replace_if_lowe(command.getCommandName().split(" ")[1], (SpaceMarine) command.getArgument())));
-                            break;
-                        case "remove_greater_key":
-                            send(new MessageForClient(collection.remove_greater_key(command.getCommandName().split(" ")[1])));
-                            break;
-                        case "remove_lower_key":
-                            send(new MessageForClient(collection.remove_lower_key(command.getCommandName().split(" ")[1])));
-                            break;
-                        case "remove_any_by_health":
-                            send(new MessageForClient(collection.remove_any_by_health(command.getCommandName().split(" ")[1])));
-                            break;
-                        case "group_counting_by_health":
-                            send(new MessageForClient(collection.group_counting_by_health()));
-                            break;
-                        case "count_less_than_health":
-                            send(new MessageForClient(collection.count_less_than_health(command.getCommandName().split(" ")[1])));
-                            break;
-                    }
-                }
-
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
+//    public void run(){
+//        try {
+//
+//                try {
+//                    collection = Console.startCollection("collection.csv", collection);
+//                    System.out.println("Collection was uploaded");
+//                }catch(FileNotFoundException e){
+//                    System.out.println("File not found. Collection is empty.");
+//                }
+//                boolean exit = false;
+//                ServerConsole console = new ServerConsole(collection, exit);
+//                console.start();
+//                socket = new DatagramSocket(SERVICE_PORT);
+//                System.out.println("Server was open");
+//
+//                while (!exit){
+//                    CommandForServer command = getCommand();
+//                    switch (command.getCommandName().split(" ")[0]){
+//                        case "askID":
+//                            send(new MessageForClient(String.valueOf(Console.getID())));
+//                            break;
+//                        case "help":
+//                            send(new MessageForClient("All commands : " + Commands.show()));
+//                            break;
+//                        case "info":
+//                            send(new MessageForClient(collection.info()));
+//                            break;
+//                        case "show":
+//                            send(new MessageForClient(collection.show()));
+//                            break;
+//                        case "insert":
+//                            send(new MessageForClient(collection.insert(command.getCommandName().split(" ")[1], (SpaceMarine)command.getArgument())));
+//                            break;
+//                        case "update":
+//                            send(new MessageForClient(collection.update(command.getCommandName().split(" ")[1], (SpaceMarine) command.getArgument())));
+//                            break;
+//                        case "remove":
+//                            send(new MessageForClient(collection.remove(command.getCommandName().split(" ")[1])));
+//                            break;
+//                        case "clear":
+//                            send(new MessageForClient(collection.clear()));
+//                            break;
+//                        case "execute_script":
+////                            send(new MessageForClient(Console.executeFile(command.getCommandName().split(" ")[1], collection)));
+//                            break;
+//                        case "replace_if_lowe":
+//                            send(new MessageForClient(collection.replace_if_lowe(command.getCommandName().split(" ")[1], (SpaceMarine) command.getArgument())));
+//                            break;
+//                        case "remove_greater_key":
+//                            send(new MessageForClient(collection.remove_greater_key(command.getCommandName().split(" ")[1])));
+//                            break;
+//                        case "remove_lower_key":
+//                            send(new MessageForClient(collection.remove_lower_key(command.getCommandName().split(" ")[1])));
+//                            break;
+//                        case "remove_any_by_health":
+//                            send(new MessageForClient(collection.remove_any_by_health(command.getCommandName().split(" ")[1])));
+//                            break;
+//                        case "group_counting_by_health":
+//                            send(new MessageForClient(collection.group_counting_by_health()));
+//                            break;
+//                        case "count_less_than_health":
+//                            send(new MessageForClient(collection.count_less_than_health(command.getCommandName().split(" ")[1])));
+//                            break;
+//                    }
+//                }
+//
+//        }catch(Exception e){
+//            System.out.println(e.getMessage());
+//        }
+//    }
 
     private CommandForServer getCommand() throws IOException, ClassNotFoundException {
         byte[] getBuffer = new byte[socket.getReceiveBufferSize()];
@@ -130,6 +130,6 @@ public class Server {
     public static void main(String[] args) {
         SpaceMarineCollection collection = new SpaceMarineCollection();
         Server server = new Server(collection);
-        server.run();
+//        server.run();
     }
 }

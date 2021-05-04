@@ -13,6 +13,14 @@ public class Coordinates implements Serializable {
         y = n;
     }
 
+    public Double getX() {
+        return x;
+    }
+
+    public long getY() {
+        return y;
+    }
+
     @Override
     public String toString() {
         return "Coordinates{" +

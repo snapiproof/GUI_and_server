@@ -12,6 +12,7 @@ import java.util.Set;
 import database.*;
 import database.Console;
 import server.ServerConsole;
+import server.User;
 
 public class Client {
     private String host;
@@ -36,10 +37,30 @@ public class Client {
             selector = Selector.open();
             clientChannel.register(selector, SelectionKey.OP_WRITE);
 
+            String login;
+            String password;
+            User user;
+            System.out.println("You need log in");
+            while(true) {
+                System.out.println("Enter login");
+                login = scanner.nextLine();
+                System.out.println("Enter password");
+                password = scanner.nextLine();
+                user = new User(login, password);
+                send(new CommandForServer<User>("add_user ", user));
+                String check = receive().getMessage();
+                System.out.println(check);
+                if ((check.equals("User signed in successfully")) || (check.equals("User was signed"))) break;
+                else {
+                    System.out.println("Try again");
+                }
+            }
+
                 boolean exit = false;
                     String[] commands;
                     while(!exit){
                         try {
+
                         System.out.println("Enter a command");
                         commands = scanner.nextLine().trim().split(" ");
 
@@ -57,23 +78,23 @@ public class Client {
                                 System.out.println(receive().getMessage());
                                 break;
                             case "insert":
-                                send(new CommandForServer<SpaceMarine>(commands[0] + " " + commands[1], Console.getElement(scanner)));
+                                send(new CommandForServer<SpaceMarine>(commands[0] + " " + commands[1] + " " + login, Console.getElement(scanner)));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "update":
-                                send(new CommandForServer<SpaceMarine>(commands[0] + " " + commands[1], Console.getElement(scanner)));
+                                send(new CommandForServer<SpaceMarine>(commands[0] + " " + commands[1] + " " + login, Console.getElement(scanner)));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "remove":
-                                send(new CommandForServer<>(commands[0] + " " + commands[1], ""));
+                                send(new CommandForServer<>(commands[0] + " " + commands[1] + " " + login, ""));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "clear":
-                                send(new CommandForServer<>(commands[0], ""));
+                                send(new CommandForServer<>(commands[0] + " " + login, ""));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "execute_script":
-                                send(new CommandForServer<>(commands[0] + " " + commands[1], ""));
+                                send(new CommandForServer<>(commands[0] + " " + commands[1] + " " + login, ""));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "exit":
@@ -81,23 +102,23 @@ public class Client {
                                 System.out.println("You disconnected from server");
                                 break;
                             case "replace_if_lowe":
-                                send(new CommandForServer<SpaceMarine>(commands[0] + " " + commands[1], Console.getElement(scanner)));
+                                send(new CommandForServer<SpaceMarine>(commands[0] + " " + commands[1] + " " + login, Console.getElement(scanner)));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "remove_greater_key":
-                                send(new CommandForServer<>(commands[0] + " " + commands[1], ""));
+                                send(new CommandForServer<>(commands[0] + " " + commands[1] + " " + login, ""));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "remove_lower_key":
-                                send(new CommandForServer<>(commands[0] + " " + commands[1], ""));
+                                send(new CommandForServer<>(commands[0] + " " + commands[1] + " " + login, ""));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "remove_any_by_health":
-                                send(new CommandForServer<>(commands[0] + " " + commands[1], ""));
+                                send(new CommandForServer<>(commands[0] + " " + commands[1] + " " + login, ""));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "group_counting_by_health":
-                                send(new CommandForServer<>(commands[0] + " " + commands[1], ""));
+                                send(new CommandForServer<>(commands[0] + " " + commands[1] + " " + login, ""));
                                 System.out.println(receive().getMessage());
                                 break;
                             case "count_less_than_health":

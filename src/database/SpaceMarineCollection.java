@@ -1,14 +1,24 @@
 package database;
-import javax.management.ObjectName;
+import server.Postgre;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SpaceMarineCollection {
 
-    private final Map<Long, SpaceMarine> linkedHashMap = new LinkedHashMap<>();
+    private Postgre postgre;
+
+    private final ConcurrentHashMap<Long, SpaceMarine> linkedHashMap = new ConcurrentHashMap<Long, SpaceMarine>();
+    public SpaceMarineCollection(Postgre postgre){
+        this.postgre = postgre;
+    }
+    public SpaceMarineCollection(){
+
+    }
 
     public String help(){
         return "All commands : " + Commands.show();
@@ -31,18 +41,23 @@ public class SpaceMarineCollection {
         }
     }
 
-    public String remove(String stringKey){
+    public String remove(String stringKey, String login){
         long key;
         try {
             key = Long.parseLong(stringKey);
-            linkedHashMap.remove(key);
-            return("Element was removed");
+            if (!(linkedHashMap.get(key) == null)) {
+                if (login.equals(linkedHashMap.get(key).getOwner())) {
+                    linkedHashMap.remove(key);
+                    postgre.remove(key);
+                    return ("Element was removed");
+                }else return "You can not remove this";
+            } else return "Element is empty";
         } catch (NumberFormatException e) {
             return("Incorrect input! Try again.");
         }
     }
 
-    public String update(String stringID, SpaceMarine spaceMarine){
+    public String update(String stringID, SpaceMarine spaceMarine, String login){
         long id;
         long key = 0;
         boolean check = false;
@@ -58,7 +73,10 @@ public class SpaceMarineCollection {
 
             if (check) {
                 linkedHashMap.replace(key, spaceMarine);
-                return("Element is updated");
+                if (login.equals(linkedHashMap.get(key).getOwner())){
+                    postgre.update(key, spaceMarine);
+                    return("Element is updated");
+                }else return "You can not update this";
             }else {
                 return("There is no element with ID: " + stringID);
             }
@@ -67,9 +85,12 @@ public class SpaceMarineCollection {
         }
     }
 
-    public String clear(){
-        linkedHashMap.clear();
-        return("Collection is empty");
+    public String clear(String login){
+        if (login.equals("postgre")) {
+            linkedHashMap.clear();
+            postgre.clear();
+            return ("Collection is empty");
+        }else return "You can not clear colelction";
     }
 
     public String show(){
@@ -95,46 +116,48 @@ public class SpaceMarineCollection {
         Set set = sortedMap.entrySet();
         for (Object element: set) {
             Map.Entry mapEntry = (Map.Entry) element;
-            line += (mapEntry.getValue().toString()) + "\n";
+            line += ("key: " + mapEntry.getKey() + " |" + mapEntry.getValue().toString()) + "\n";
         }
         return "LinkedHashMap initial content: \n" + line;
     }
 
-    public String remove_greater_key(String stringKey){
+    public String remove_greater_key(String stringKey, String login){
         long key;
         try {
             key = Long.parseLong(stringKey);
             Set set = linkedHashMap.entrySet();
             for (Object element : set) {
                 Map.Entry mapEntry = (Map.Entry) element;
-                if ((Long)mapEntry.getKey() > key){
+                if (((Long)mapEntry.getKey() > key)&&(login.equals(linkedHashMap.get(key).getOwner()))){
                     linkedHashMap.remove(key);
+                    postgre.remove(key);
                 }
             }
-            return("Elements with key more than " + key + " were deleted.");
+            return("Elements with key more than " + key + " were deleted. If you can deleted it");
         }catch (NumberFormatException e){
             return("Incorrect input! Try again.");
         }
     }
 
-    public String remove_lower_key(String stringKey){
+    public String remove_lower_key(String stringKey, String login){
         long key;
         try {
             key = Long.parseLong(stringKey);
             Set set = linkedHashMap.entrySet();
             for (Object element : set) {
                 Map.Entry mapEntry = (Map.Entry) element;
-                if ((Long)mapEntry.getKey() < key){
+                if (((Long)mapEntry.getKey() < key)&&(login.equals(linkedHashMap.get(key).getOwner()))){
                     linkedHashMap.remove(key);
+                    postgre.remove(key);
                 }
             }
-            return ("Elements with key more than " + key + " were deleted.");
+            return("Elements with key less than " + key + " were deleted. If you can deleted it");
         }catch (NumberFormatException e){
             return ("Incorrect input! Try again.");
         }
     }
 
-    public String remove_any_by_health(String stringHealth){
+    public String remove_any_by_health(String stringHealth, String login){
         Double health;
         boolean check = false;
         try {
@@ -143,9 +166,10 @@ public class SpaceMarineCollection {
             String line = "";
             for (Object element : set) {
                 Map.Entry mapEntry = (Map.Entry) element;
-                if ( linkedHashMap.get(mapEntry.getKey()).getHealth() == health) {
+                if (( linkedHashMap.get(mapEntry.getKey()).getHealth() == health)&&(login.equals(linkedHashMap.get(mapEntry.getKey()).getOwner()))) {
                     line += mapEntry.getKey();
                     linkedHashMap.remove(mapEntry.getKey());
+                    postgre.remove((Long)mapEntry.getKey());
                     check = true;
                     break;
                 }
@@ -158,12 +182,13 @@ public class SpaceMarineCollection {
         }
     }
 
-    public String replace_if_lowe(String stringKey, SpaceMarine spaceMarine){
+    public String replace_if_lowe(String stringKey, SpaceMarine spaceMarine, String login){
         long key;
         try {
             key = Long.parseLong(stringKey);
-            if (spaceMarine.getMarinesCount() < linkedHashMap.get(key).getMarinesCount()){
+            if ((spaceMarine.getMarinesCount() < linkedHashMap.get(key).getMarinesCount())&&(login.equals(linkedHashMap.get(key).getOwner()))){
                 linkedHashMap.replace(key, spaceMarine);
+                postgre.update(key, spaceMarine);
                 return("Element was replaced");
             }else {
                 return("Element wasn't replaced");

@@ -41,7 +41,11 @@ public class Main {
             connection = null;
             password = null;
         }
-        DataBase dataBase = new DataBase(connection, "postgres", password);
+
+
+        Postgre postgre = new Postgre(connection, "postgres", password);
+        SpaceMarineCollection collection = new SpaceMarineCollection(postgre);
+        postgre.fillCollection(collection);
 
         ExecutorService cachedPool = Executors.newCachedThreadPool();
         ExecutorService fixedPool = Executors.newFixedThreadPool(2);
@@ -51,11 +55,10 @@ public class Main {
         DatagramSocket socket = new DatagramSocket(SERVICE_PORT);
 
 
-        SpaceMarineCollection collection = new SpaceMarineCollection();
         Exchanger<CommandForServer> exchangerCommand = new Exchanger<>();
         Exchanger<MessageForClient> exchangerMessage = new Exchanger<>();
         fixedPool.submit(new ServerReading(socket, collection, exchangerCommand));
-        cachedPool.submit(new ServerProcessing(socket, collection, exchangerCommand, exchangerMessage, dataBase));
+        cachedPool.submit(new ServerProcessing(socket, collection, exchangerCommand, exchangerMessage, postgre));
         forkJoinPool.invoke(new ServerWriting(socket, exchangerMessage));
     }
 }

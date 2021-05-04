@@ -1,4 +1,6 @@
 package database;
+import server.Postgre;
+
 import java.io.File;
 import java.io.FileReader;
 import java.time.ZonedDateTime;
@@ -43,8 +45,8 @@ public class Console {
                         int chapterMarinesCount = Integer.parseInt(params[10]);
                         Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
                         long id = Console.createID();
-                        java.time.ZonedDateTime creationDate = ZonedDateTime.now();
-                        SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+                        String creationDate = ZonedDateTime.now().toString();
+                        SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
                         collection.insert(stringKey, spaceMarine);
                     }catch (ArrayIndexOutOfBoundsException e){
                         System.out.println("Incorrect input. Collection is empty");
@@ -59,8 +61,10 @@ public class Console {
         return collection;
     }
 
-    public static String executeFile(String nameFile, SpaceMarineCollection collection) throws Exception{
+    public static String executeFile(String nameFile, SpaceMarineCollection collection, Postgre postgre, String login) throws Exception{
         boolean executeExit = false;
+
+
         FileReader fr = new FileReader(nameFile);
         Scanner file = new Scanner(fr);
         String command;
@@ -75,6 +79,7 @@ public class Console {
                 break;
             }
             try {
+                String s;
                 switch (command) {
                     case "help":
                         line += "\n" + ("All commands : " + Commands.show());
@@ -86,16 +91,23 @@ public class Console {
                         line += "\n" + collection.show();
                         break;
                     case "insert":
-                        line += "\n" + collection.insert(commands[1], Console.getElementFromFile(commands[2]));
+                        SpaceMarine elem = Console.getElementFromFile(commands[2]);
+                        s = collection.insert(commands[1], elem);
+                        line += "\n" + s;
+                        elem.setOwner(login);
+                        if(s == "Element is inserted") {
+                            elem.setKey(Long.parseLong(commands[1]));
+                            postgre.insert(elem);
+                        }
                         break;
                     case "update":
-                        line += "\n" + collection.update(commands[1], Console.getElementFromFile(commands[2]));
+                        line += "\n" + collection.update(commands[1], Console.getElementFromFile(commands[2]), login);
                         break;
                     case "remove":
-                        line += "\n" + collection.remove(commands[1]);
+                        line += "\n" + collection.remove(commands[1], login);
                         break;
                     case "clear":
-                        line += "\n" + collection.clear();
+                        line += "\n" + collection.clear(login);
                         break;
 //                    case "save":
 //                        collection.writeToFIle(commands[1]);
@@ -113,16 +125,16 @@ public class Console {
 //                        line += "\n" + ("You closed this program");
                         break;
                     case "replace_if_lowe null":
-                        line += "\n" + collection.replace_if_lowe(commands[1], getElementFromFile(commands[2]));
+                        line += "\n" + collection.replace_if_lowe(commands[1], getElementFromFile(commands[2]), login);
                         break;
                     case "remove_greater_key":
-                        line += "\n" + collection.remove_greater_key(commands[1]);
+                        line += "\n" + collection.remove_greater_key(commands[1], login);
                         break;
                     case "remove_lower_key":
-                        line += "\n" + collection.remove_lower_key(commands[1]);
+                        line += "\n" + collection.remove_lower_key(commands[1], login);
                         break;
                     case "remove_any_by_health":
-                        line += "\n" + collection.remove_any_by_health(commands[1]);
+                        line += "\n" + collection.remove_any_by_health(commands[1], login);
                         break;
                     case "group_counting_by_health":
                         line += "\n" + collection.group_counting_by_health();
@@ -168,8 +180,8 @@ public class Console {
             int chapterMarinesCount = Integer.parseInt(params[9]);
             Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
             long id = Console.createID();
-            java.time.ZonedDateTime creationDate = ZonedDateTime.now();
-            SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+            String creationDate = ZonedDateTime.now().toString();
+            SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
             return spaceMarine;
         } catch(ArrayIndexOutOfBoundsException e){
             System.out.println("incorrect element");
@@ -317,10 +329,10 @@ public class Console {
         long id = Console.createID();
 
         // initialisation java.time.ZonedDateTime creationDate of element
-        java.time.ZonedDateTime creationDate = ZonedDateTime.now();
+        String creationDate = ZonedDateTime.now().toString();
 
         // java.time.ZonedDateTime of element
-        SpaceMarine spaceMarine = new SpaceMarine(id, name, coordinates, creationDate, health, category, weaponType, meleeWeapon, chapter);
+        SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, meleeWeapon, chapter);
         return spaceMarine;
     }
 }

@@ -15,6 +15,14 @@ public class Chapter implements Serializable {
         marinesCount = x;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getParentLegion() {
+        return parentLegion;
+    }
+
     public int getMarinesCount() {
         return marinesCount;
     }

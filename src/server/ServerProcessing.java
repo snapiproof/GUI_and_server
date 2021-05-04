@@ -6,8 +6,6 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 import java.util.concurrent.Exchanger;
 import database.*;
 import database.MessageForClient;
@@ -21,24 +19,34 @@ public class ServerProcessing implements Runnable {
     private InetAddress address;
     private int port;
     private MessageForClient message;
-    private DataBase dataBase;
+    private Postgre postgre;
 
-    public ServerProcessing(DatagramSocket socket, SpaceMarineCollection collection, Exchanger<CommandForServer> exchangerCommand, Exchanger<MessageForClient> exchangerMessage, DataBase dataBase) {
+    public ServerProcessing(DatagramSocket socket, SpaceMarineCollection collection, Exchanger<CommandForServer> exchangerCommand, Exchanger<MessageForClient> exchangerMessage, Postgre postgre) {
         this.socket = socket;
         this.collection = collection;
         this.exchangerCommand = exchangerCommand;
         this.exchangerMessage = exchangerMessage;
-        this.dataBase = dataBase;
+        this.postgre = postgre;
     }
 
     @Override
     public void run() {
+        SpaceMarine spaceMarine;
+        User user;
+        String check;
+        String key;
         while(true){
             try {
+                String owner;
                 CommandForServer command = exchangerCommand.exchange(null);
                 address = command.getAddress();
                 port = command.getPort();
                 switch (command.getCommandName().split(" ")[0]) {
+                    case "add_user":
+                        user = (User) command.getArgument();
+                        System.out.println(user.getPassword());
+                        message = new MessageForClient(postgre.addNewUser(user), address, port);
+                        break;
                     case "help":
                         message = new MessageForClient("All commands : " + Commands.show(), address, port);
                         break;
@@ -49,31 +57,48 @@ public class ServerProcessing implements Runnable {
                         message = new MessageForClient(collection.show(), address, port);
                         break;
                     case "insert":
-                        message = new MessageForClient(collection.insert(command.getCommandName().split(" ")[1], (SpaceMarine)command.getArgument()), address, port);
+                        spaceMarine = (SpaceMarine)command.getArgument();
+                        key = command.getCommandName().split(" ")[1];
+                        owner = command.getCommandName().split(" ")[2];
+                        spaceMarine.setOwner(owner);
+                        check = collection.insert(key, spaceMarine);
+                        message = new MessageForClient(check, address, port);
+                        if(check == "Element is inserted") {
+                            spaceMarine.setKey(Long.parseLong(key));
+                            postgre.insert(spaceMarine);
+                        }
                         break;
                     case "update":
-                        message = new MessageForClient(collection.update(command.getCommandName().split(" ")[1], (SpaceMarine) command.getArgument()), address, port);
+                        owner = command.getCommandName().split(" ")[2];
+                        message = new MessageForClient(collection.update(command.getCommandName().split(" ")[1], (SpaceMarine) command.getArgument(), owner), address, port);
                         break;
                     case "remove":
-                        message = new MessageForClient(collection.remove(command.getCommandName().split(" ")[1]), address, port);
+                        owner = command.getCommandName().split(" ")[2];
+                        message = new MessageForClient(collection.remove(command.getCommandName().split(" ")[1], owner), address, port);
                         break;
                     case "clear":
-                        message = new MessageForClient(collection.clear());
+                        owner = command.getCommandName().split(" ")[1];
+                        message = new MessageForClient(collection.clear(owner), address, port);
                         break;
                     case "execute_script":
-                        message = new MessageForClient(Console.executeFile(command.getCommandName().split(" ")[1], collection), address, port);
+                        owner = command.getCommandName().split(" ")[2];
+                        message = new MessageForClient(Console.executeFile(command.getCommandName().split(" ")[1], collection, postgre, owner), address, port);
                         break;
                     case "replace_if_lowe":
-                        message = new MessageForClient(collection.replace_if_lowe(command.getCommandName().split(" ")[1], (SpaceMarine) command.getArgument()), address, port);
+                        owner = command.getCommandName().split(" ")[2];
+                        message = new MessageForClient(collection.replace_if_lowe(command.getCommandName().split(" ")[1], (SpaceMarine) command.getArgument(), owner), address, port);
                         break;
                     case "remove_greater_key":
-                        message = new MessageForClient(collection.remove_greater_key(command.getCommandName().split(" ")[1]), address, port);
+                        owner = command.getCommandName().split(" ")[2];
+                        message = new MessageForClient(collection.remove_greater_key(command.getCommandName().split(" ")[1], owner), address, port);
                         break;
                     case "remove_lower_key":
-                        message = new MessageForClient(collection.remove_lower_key(command.getCommandName().split(" ")[1]), address, port);
+                        owner = command.getCommandName().split(" ")[2];
+                        message = new MessageForClient(collection.remove_lower_key(command.getCommandName().split(" ")[1], owner), address, port);
                         break;
                     case "remove_any_by_health":
-                        message = new MessageForClient(collection.remove_any_by_health(command.getCommandName().split(" ")[1]), address, port);
+                        owner = command.getCommandName().split(" ")[2];
+                        message = new MessageForClient(collection.remove_any_by_health(command.getCommandName().split(" ")[1], owner), address, port);
                         break;
                     case "group_counting_by_health":
                         message = new MessageForClient(collection.group_counting_by_health());
