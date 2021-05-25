@@ -12,12 +12,16 @@ public class Console {
     public Console(long k){
         this.idCounter = k;
     }
-    public static long getID(){
+    private static long getID(){
         return idCounter;
     }
     private static synchronized long createID()
     {
         return (idCounter++);
+    }
+
+    public static void setIdCounter(long idCounter) {
+        Console.idCounter = idCounter;
     }
 
     public static SpaceMarineCollection startCollection(String nameFile, SpaceMarineCollection collection) throws Exception{
@@ -182,6 +186,35 @@ public class Console {
             long id = Console.createID();
             String creationDate = ZonedDateTime.now().toString();
             SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+            return spaceMarine;
+        } catch(ArrayIndexOutOfBoundsException e){
+            System.out.println("incorrect element");
+            return null;
+        }
+    }
+    public static SpaceMarine getElementFromLine(String element) {
+        try {
+            String[] params = element.split(",");
+            String name = params[0];
+            double x = Double.parseDouble(params[1]);
+            long y = Long.parseLong(params[2]);
+            Coordinates coordinates = new Coordinates(x, y);
+            double health = Double.parseDouble(params[3]);
+            AstartesCategory category = AstartesCategory.valueOf(params[4]);
+            Weapon weaponType = Weapon.valueOf(params[5]);
+            MeleeWeapon melleWeapon = MeleeWeapon.valueOf(params[6]);
+            String chapterName = params[7];
+            String chapterParentLegion = params[8];
+            int chapterMarinesCount = Integer.parseInt(params[9]);
+            Chapter chapter = new Chapter(chapterName, chapterParentLegion, chapterMarinesCount);
+            long id = Long.parseLong(params[10]);
+            String creationDate = params[11];
+            String owner = params[12];
+            Long key = Long.parseLong(params[13]);
+            SpaceMarine spaceMarine = new SpaceMarine(name, coordinates, creationDate, health, category, weaponType, melleWeapon, chapter);
+            spaceMarine.setOwner(owner);
+            spaceMarine.setKey(key);
+            spaceMarine.setId(id);
             return spaceMarine;
         } catch(ArrayIndexOutOfBoundsException e){
             System.out.println("incorrect element");

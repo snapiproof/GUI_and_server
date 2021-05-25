@@ -11,10 +11,15 @@ import java.util.Scanner;
 import java.util.Set;
 import database.*;
 import database.Console;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import server.ServerConsole;
 import server.User;
 
 public class Client {
+    private String textField;
     private String host;
     private int port;
     private DatagramChannel clientChannel;
@@ -26,9 +31,6 @@ public class Client {
     public Client(String host, int port) {
         this.host = host;
         this.port = port;
-    }
-
-    public void run() {
         try {
             clientChannel = DatagramChannel.open();
             address = new InetSocketAddress("localhost", this.port);
@@ -36,6 +38,76 @@ public class Client {
             clientChannel.configureBlocking(false);
             selector = Selector.open();
             clientChannel.register(selector, SelectionKey.OP_WRITE);
+        }catch (Exception e){
+
+        }
+    }
+    public boolean checkLogin(String login, String password){
+        try {
+            User user = new User(login, password);
+            send(new CommandForServer<User>("add_user", user));
+            String check = receive().getMessage();
+            System.out.println(check);
+            if ((check.equals("User signed in successfully")) || (check.equals("User was signed"))) {
+                return true;
+            } else {
+                return false;
+            }
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "host='" + host + '\'' +
+                ", port=" + port +
+                ", clientChannel=" + clientChannel +
+                ", address=" + address +
+                ", selector=" + selector +
+                ", byteBuffer=" + byteBuffer +
+                '}';
+    }
+
+    public static SpaceMarineCollection AskCollection(String host, int port){
+        Client client = new Client(host, port);
+        return client.askCollection();
+    }
+
+    public SpaceMarineCollection askCollection(){
+        SpaceMarineCollection spaceMarineCollection = new SpaceMarineCollection();
+        try {
+            send(new CommandForServer<>("show", ""));
+            String all = receive().getMessage();
+            String[] q = all.split("\n");
+            int i = q.length;
+            int f;
+            for (f = 1; f<i; f++) {
+                String collection = all.split("\n")[f];
+                String key = collection.split(" ")[1];
+                String element = collection.split(" ")[3];
+                SpaceMarine e = Console.getElementFromLine(element);
+                e.setKey(Long.parseLong(key));
+                spaceMarineCollection.insert(key, e);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return spaceMarineCollection;
+
+    }
+
+    public static void main(String[] args) {
+        Client client = new Client("localhost", 5001);
+        client.run();
+//        System.out.println(client.askCollection().show());
+
+    }
+
+
+    public void run() {
+        try {
 
             String login;
             String password;
@@ -65,6 +137,9 @@ public class Client {
                         commands = scanner.nextLine().trim().split(" ");
 
                         switch(commands[0]) {
+                            case "askCollection":
+                                askCollection();
+                                break;
                             case "help":
                                 send(new CommandForServer<>(commands[0], ""));
                                 System.out.println(receive().getMessage());
@@ -138,9 +213,99 @@ public class Client {
         }
     }
 
-    public static void main(String[] args) {
-        Client client = new Client("localhost", 5000);
-        client.run();
+    public String replace_if_lowe(String key, SpaceMarine element, String login){
+        try {
+            send(new CommandForServer<SpaceMarine>("replace_if_lowe" + " " + key + " " + login, element));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+    public String count_less_than_health(String health){
+        try {
+            send(new CommandForServer<>("count_less_than_health" + " " + health, ""));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+    public String remove_any_by_health(String health, String login){
+        try {
+            send(new CommandForServer<>("remove_any_by_health" + " " + health + " " + login, ""));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+    public String remove_lower_key(String key, String login){
+        try {
+            send(new CommandForServer<>("remove_lower_key" + " " + key + " " + login, ""));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+    public String remove_greater_key(String key, String login){
+        try {
+            send(new CommandForServer<>("remove_greater_key" + " " + key + " " + login, ""));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+
+
+    public String executeScript(String file, String login){
+        try {
+            send(new CommandForServer<>("execute_script" + " " + file + " " + login, ""));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+    public String remove(String key, String login){
+        try {
+            send(new CommandForServer<>("remove" + " " + key + " " + login, ""));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+
+    public String show(){
+        try {
+            send(new CommandForServer<>("show", ""));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+
+    public String insert(String key, SpaceMarine spaceMarine, String login){
+        try {
+            send(new CommandForServer<SpaceMarine>("insert" + " " + key + " " + login, spaceMarine));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+
+    public String update(String key, SpaceMarine spaceMarine, String login){
+        try {
+            send(new CommandForServer<SpaceMarine>("update" + " " + key + " " + login, spaceMarine));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
+    }
+
+    public String clear(String login){
+        try {
+            send(new CommandForServer<>("clear" + " " + login, ""));
+            return receive().getMessage();
+        }catch(Exception e){
+            return "Exception";
+        }
     }
 
     private void send(CommandForServer<?> command) throws IOException {
@@ -202,4 +367,11 @@ public class Client {
         return message;
     }
 
+    public void setTextField(String textField) {
+        this.textField = textField;
+    }
+
+    public String getTextField() {
+        return textField;
+    }
 }
