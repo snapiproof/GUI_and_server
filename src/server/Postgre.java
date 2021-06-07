@@ -34,7 +34,7 @@ public class Postgre {
             String request = "insert into \"SpaceMarineCollection\" VALUES (nextval('sYOURCODE_sequence'),?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             PreparedStatement statement = connection.prepareStatement(request);
-            statement.setString(1, "postgre");
+            statement.setString(1, spaceMarine.getOwner());
             statement.setLong(13, spaceMarine.getKey());
             statement.setString(2, spaceMarine.getName());
             statement.setDouble(3, spaceMarine.getCoordinates().getX());
@@ -49,33 +49,7 @@ public class Postgre {
             statement.setInt(12, spaceMarine.getChapter().getMarinesCount());
             statement.executeUpdate();
             statement.close();
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
-    public void update(SpaceMarine spaceMarine) {
-        try {
-            String request = "insert into \"SpaceMarineCollection\" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
-            PreparedStatement statement = connection.prepareStatement(request);
-            statement.setLong(1, spaceMarine.getId());
-            statement.setString(2, "postgre");
-            statement.setLong(14, spaceMarine.getKey());
-            statement.setString(3, spaceMarine.getName());
-            statement.setDouble(4, spaceMarine.getCoordinates().getX());
-            statement.setLong(5, spaceMarine.getCoordinates().getY());
-            statement.setString(6, spaceMarine.getCreationDate());
-            statement.setDouble(7, spaceMarine.getHealth());
-            statement.setString(8, spaceMarine.getCategory().toString());
-            statement.setString(9, spaceMarine.getWeaponType().toString());
-            statement.setString(10, spaceMarine.getMeleeWeapon().toString());
-            statement.setString(11, spaceMarine.getChapter().getName());
-            statement.setString(12, spaceMarine.getChapter().getParentLegion());
-            statement.setInt(13, spaceMarine.getChapter().getMarinesCount());
-            statement.executeUpdate();
-            statement.close();
+            spaceMarine.setId(getID());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -109,10 +83,10 @@ public class Postgre {
     }
 
     public void update(long key, SpaceMarine spaceMarine){
-        String request  = "update \"SpaceMarineCollection\" SET id=nextval('sYOURCODE_sequence'), name=?, x=?, y=?, health=?, AstartesCategory=?, Weapon=?, MeleeWeapon=?,ChapterName=?, ChapterLegion=?, MarinesCount=? WHERE key=?";
+        String request  = "update \"SpaceMarineCollection\" SET key=?, name=?, x=?, y=?, health=?, astartescategory=?, Weapon=?, MeleeWeapon=?,ChapterName=?, ChapterLegion=?, MarinesCount=? WHERE id=?";
         try {
             PreparedStatement statement = connection.prepareStatement(request);
-            statement.setLong(11, key);
+            statement.setLong(1, key);
             statement.setString(2, spaceMarine.getName());
             statement.setDouble(3, spaceMarine.getCoordinates().getX());
             statement.setLong(4, spaceMarine.getCoordinates().getY());
@@ -120,9 +94,10 @@ public class Postgre {
             statement.setString(6, spaceMarine.getCategory().toString());
             statement.setString(7, spaceMarine.getWeaponType().toString());
             statement.setString(8, spaceMarine.getMeleeWeapon().toString());
-            statement.setString(8, spaceMarine.getChapter().getName());
-            statement.setString(9, spaceMarine.getChapter().getParentLegion());
-            statement.setInt(10, spaceMarine.getChapter().getMarinesCount());
+            statement.setString(9, spaceMarine.getChapter().getName());
+            statement.setString(10, spaceMarine.getChapter().getParentLegion());
+            statement.setInt(11, spaceMarine.getChapter().getMarinesCount());
+            statement.setLong(12, spaceMarine.getId());
             statement.executeUpdate();
             statement.close();
         } catch (PSQLException e){
@@ -137,10 +112,12 @@ public class Postgre {
         try {
             PreparedStatement statement = connection.prepareStatement(request);
             ResultSet result = statement.executeQuery();
+            long x = 1;
             while (result.next()){
                 SpaceMarine element = getElement(result);
                 String key = getKey(result);
                 collection.insert(key, element);
+                x = element.getId();
             }
             statement.close();
             System.out.println("Collection was successfully filled from DB");
@@ -166,6 +143,7 @@ public class Postgre {
         Chapter chapter = new Chapter(chapterName, chapterLegion, marinesCount);
         SpaceMarine element = new SpaceMarine(name, coordinates, creationDate, health, category, weapon, meleeWeapon, chapter);
         element.setId(id);
+        element.setOwner(result.getString(2));
 
         return element;
     }
@@ -173,9 +151,23 @@ public class Postgre {
         String key = result.getString(14);
         return key;
     }
-    private Long getID(ResultSet result) throws SQLException {
-        long id = (Long) result.getLong(1);
-        return id;
+    private Long getID() throws SQLException {
+        String request = "SELECT * FROM \"SpaceMarineCollection\" WHERE id=(SELECT max(id) FROM \"SpaceMarineCollection\")";
+        try {
+            PreparedStatement statement = connection.prepareStatement(request);
+            ResultSet result = statement.executeQuery();
+            long x = 1;
+            while (result.next()){
+                SpaceMarine element = getElement(result);
+                x = element.getId();
+            }
+            statement.close();
+            return x;
+        } catch (SQLException throwables) {
+            System.exit(-1);
+            return (long)1;
+        }
+
     }
     public String addNewUser(User user) {
         String request  = "SELECT*FROM  \"Users\"";

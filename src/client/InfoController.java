@@ -22,6 +22,7 @@ public class InfoController implements Initializable {
         this.spaceMarineCollection = spaceMarineCollection;
     }
 
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         spaceMarineCollection = Client.AskCollection("localhost", 5001);

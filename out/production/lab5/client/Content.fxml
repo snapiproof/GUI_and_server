@@ -70,6 +70,11 @@
                     <Tooltip fx:id="updateSelectedTooltip" text="updateSelectedButtonTooltip" />
                 </tooltip>
             </Button>
+            <Button fx:id="deleteSelectedButton" mnemonicParsing="false" onAction="#deleteSelected" text="deleteSelected">
+                <tooltip>
+                    <Tooltip fx:id="deleteSelectedTooltip" text="deleteSelectedButtonTooltip" />
+                </tooltip>
+            </Button>
             <Button fx:id="addButton" mnemonicParsing="false" onAction="#addButtonOnAction" text="AddButton">
                 <tooltip>
                     <Tooltip fx:id="addButtonTooltip" text="AddButtonTooltip" />

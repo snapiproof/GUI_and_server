@@ -19,6 +19,9 @@ public class SpaceMarineCollection {
     public SpaceMarineCollection(){
 
     }
+    public ConcurrentHashMap getHashMap(){
+        return linkedHashMap;
+    }
 
     public String help(){
         return "All commands : " + Commands.show();
@@ -93,6 +96,36 @@ public class SpaceMarineCollection {
         }else return "You can not clear colelction";
     }
 
+    public SpaceMarine getAll(){
+        Map map = linkedHashMap;
+        List<Map.Entry<Long, SpaceMarine>> list = new LinkedList<Map.Entry<Long, SpaceMarine>>(map.entrySet());
+
+        // Sorting the list based on values
+        Collections.sort(list, new Comparator<Map.Entry<Long, SpaceMarine>>()
+        {
+            public int compare(Map.Entry<Long, SpaceMarine> o1,
+                               Map.Entry<Long, SpaceMarine> o2)
+            {
+                return o1.getValue().getName().compareTo(o2.getValue().getName());
+            }
+        });
+
+        Map<Long, SpaceMarine> sortedMap = new LinkedHashMap<Long, SpaceMarine>();
+        for (Map.Entry<Long, SpaceMarine> entry : list)
+        {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+        String line = "";
+        Set set = sortedMap.entrySet();
+        SpaceMarine e = null;
+        for (Object element: set) {
+            Map.Entry mapEntry = (Map.Entry) element;
+            line += ("key: " + mapEntry.getKey() + " | " + mapEntry.getValue().toString()) + "\n";
+            e = (SpaceMarine) mapEntry.getValue();
+        }
+        return e;
+    }
+
     public String show(){
         Map map = linkedHashMap;
         List<Map.Entry<Long, SpaceMarine>> list = new LinkedList<Map.Entry<Long, SpaceMarine>>(map.entrySet());
@@ -116,7 +149,7 @@ public class SpaceMarineCollection {
         Set set = sortedMap.entrySet();
         for (Object element: set) {
             Map.Entry mapEntry = (Map.Entry) element;
-            line += ("key: " + mapEntry.getKey() + " |" + mapEntry.getValue().toString()) + "\n";
+            line += ("key: " + mapEntry.getKey() + " | " + mapEntry.getValue().toString()) + "\n";
         }
         return "LinkedHashMap initial content: \n" + line;
     }

@@ -42,9 +42,12 @@ public class ServerProcessing implements Runnable {
                 address = command.getAddress();
                 port = command.getPort();
                 switch (command.getCommandName().split(" ")[0]) {
+                    case "askCollection":
+                        message = new MessageForClient("1", address, port);
+                        message.setSpaceMarineCollection(collection);
+                        break;
                     case "add_user":
                         user = (User) command.getArgument();
-                        System.out.println(user.getPassword());
                         message = new MessageForClient(postgre.addNewUser(user), address, port);
                         break;
                     case "help":
@@ -61,16 +64,23 @@ public class ServerProcessing implements Runnable {
                         key = command.getCommandName().split(" ")[1];
                         owner = command.getCommandName().split(" ")[2];
                         spaceMarine.setOwner(owner);
+                        System.out.println(owner);
                         check = collection.insert(key, spaceMarine);
                         message = new MessageForClient(check, address, port);
                         if(check == "Element is inserted") {
                             spaceMarine.setKey(Long.parseLong(key));
+                            collection.update(key, spaceMarine, owner);
                             postgre.insert(spaceMarine);
                         }
                         break;
                     case "update":
+                        spaceMarine = (SpaceMarine)command.getArgument();
+                        key = command.getCommandName().split(" ")[1];
                         owner = command.getCommandName().split(" ")[2];
-                        message = new MessageForClient(collection.update(command.getCommandName().split(" ")[1], (SpaceMarine) command.getArgument(), owner), address, port);
+                        spaceMarine.setOwner(owner);
+                        long id = Long.parseLong(command.getCommandName().split(" ")[1]);
+                        spaceMarine.setId(id);
+                        message = new MessageForClient(collection.update(command.getCommandName().split(" ")[1], spaceMarine, owner), address, port);
                         break;
                     case "remove":
                         owner = command.getCommandName().split(" ")[2];

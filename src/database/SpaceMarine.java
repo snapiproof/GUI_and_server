@@ -16,12 +16,18 @@ public class SpaceMarine implements Serializable {
     private final MeleeWeapon meleeWeapon; //Поле может быть null
     private final Chapter chapter; //Поле не может быть null
     public static final Double MinHealth = 0.0;
+    private long y;
+    private double xfs;
+    private String chapterName;
+    private String chapterLegion;
+    private int chapterCount;
     private long key;
     private String owner;
 
     public void setId(long id) {
         this.id = id;
     }
+
 
     public void setOwner(String owner) {
         this.owner = owner;
@@ -69,6 +75,36 @@ public class SpaceMarine implements Serializable {
         this.coordinates = coordinates;
         this.health = health;
         this.weaponType = weaponType;
+        this.xfs = coordinates.getX();
+        this.y = coordinates.getY();
+        this.chapterCount = chapter.getMarinesCount();
+        this.chapterLegion = chapter.getParentLegion();
+        this.chapterName = chapter.getName();
+    }
+
+    public void setXfs(double xfs) {
+        this.xfs = xfs;
+    }
+
+    public long getY() {
+        return y;
+    }
+
+    public double getXfs() {
+        return xfs;
+    }
+
+    public int getChapterCount() {
+        return chapterCount;
+    }
+
+    public String getChapterLegion() {
+        return chapterLegion;
+    }
+
+
+    public String getChapterName() {
+        return chapterName;
     }
 
     public Double getMinHealth() {
@@ -81,20 +117,24 @@ public class SpaceMarine implements Serializable {
 
     @Override
     public String toString() {
-        return "SpaceMarine{" +
-                ", ID='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", coordinates=" + coordinates.toString() +
-                ", creationDate=" + creationDate +
-                ", health=" + health +
-                ", category=" + category +
-                ", weaponType=" + weaponType +
-                ", meleeWeapon=" + meleeWeapon +
-                ", chapter=" + chapter.toString() +
-                '}';
+        return "" + name +
+                "," + xfs +
+                "," + y +
+                "," + health +
+                "," + category +
+                "," + weaponType +
+                "," + meleeWeapon +
+                "," + chapterName +
+                "," + chapterLegion +
+                "," + chapterCount +
+                "," + id +
+                "," + creationDate +
+                "," + owner +
+                "," + key
+                ;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

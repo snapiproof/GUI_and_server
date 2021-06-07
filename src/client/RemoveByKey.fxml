@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="362.0" prefWidth="246.0" style="-fx-background-color: silver;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.RemoveController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="350.0" style="-fx-background-color: silver;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.RemoveController">
    <children>
-      <Label fx:id="textLabel" alignment="CENTER" layoutX="58.0" layoutY="14.0" prefHeight="27.0" prefWidth="130.0" text="EnterKey" textAlignment="CENTER" textFill="#ae0808">
+      <Label fx:id="textLabel" alignment="CENTER" layoutX="99.0" layoutY="14.0" prefHeight="27.0" prefWidth="150.0" text="Введите ключ" textAlignment="CENTER" textFill="#ae0808">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Button fx:id="okButton" layoutX="90.0" layoutY="78.0" mnemonicParsing="false" onAction="#okButtonOnAction" prefHeight="26.0" prefWidth="65.0" text="ok" />
-      <TextField fx:id="textField" layoutX="61.0" layoutY="46.0" prefHeight="26.0" prefWidth="124.0" />
+      <Button fx:id="okButton" layoutX="137.0" layoutY="98.0" mnemonicParsing="false" onAction="#okButtonOnAction" prefHeight="26.0" prefWidth="75.0" text="удалить" />
+      <TextField fx:id="textField" layoutX="65.0" layoutY="56.0" prefHeight="26.0" prefWidth="218.0" />
       <Label fx:id="resultLabel" alignment="CENTER" layoutY="125.0" prefHeight="196.0" prefWidth="246.0" textAlignment="CENTER" textFill="#ae0808" wrapText="true" />
-      <Button fx:id="closeButton" layoutX="90.0" layoutY="321.0" mnemonicParsing="false" onAction="#closeButtonOnAction" prefHeight="26.0" prefWidth="65.0" text="close" />
+      <Button fx:id="closeButton" layoutX="143.0" layoutY="359.0" mnemonicParsing="false" onAction="#closeButtonOnAction" prefHeight="26.0" prefWidth="65.0" text="закрыть" />
+      <ImageView fitHeight="190.0" fitWidth="297.0" layoutX="27.0" layoutY="148.0">
+         <image>
+            <Image url="@img/removeBYkey.jfif" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

@@ -64,7 +64,7 @@ public class Controller{
             contentController.setClient(client);
             stage.setTitle("Content");
             stageOld.close();
-            stage.setScene(new Scene(root, 1100, 700));
+            stage.setScene(new Scene(root, 2000, 1000));
             contentController.setUsername(usernameField.getText());
             stage.show();
         } else{
@@ -73,7 +73,7 @@ public class Controller{
             load.setLocation(getClass().getResource("IncorrectPassword.fxml"));
             Parent root = load.load();
             stage.setTitle("Error");
-            stage.setScene(new Scene(root, 200, 100));
+            stage.setScene(new Scene(root, 468, 367));
             stage.show();
 
         }

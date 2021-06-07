@@ -8,6 +8,7 @@ public class MessageForClient implements Serializable {
     private boolean commandIsDone;
     private InetAddress address;
     private int port;
+    private SpaceMarineCollection spaceMarineCollection;
 
     public String getMessage() {
         return message;
@@ -20,6 +21,14 @@ public class MessageForClient implements Serializable {
         this.message = message;
         this.address = address;
         this.port = port;
+    }
+
+    public void setSpaceMarineCollection(SpaceMarineCollection spaceMarineCollection) {
+        this.spaceMarineCollection = spaceMarineCollection;
+    }
+
+    public SpaceMarineCollection getSpaceMarineCollection() {
+        return spaceMarineCollection;
     }
 
     public int getPort() {

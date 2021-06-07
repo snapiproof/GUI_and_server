@@ -14,7 +14,7 @@ import java.sql.*;
 import java.util.concurrent.ForkJoinPool;
 
 public class Main {
-    private static final int SERVICE_PORT = 5000;
+    private static final int SERVICE_PORT = 5001;
 
     public static void main(String[] args) throws IOException {
         try {

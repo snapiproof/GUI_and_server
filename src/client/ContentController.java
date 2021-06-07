@@ -101,6 +101,20 @@ public class ContentController implements Initializable {
     @FXML
     private Button refreshButton;
     @FXML
+    private Button updateSelectedButton;
+    @FXML
+    private Button deleteSelectedButton;
+    @FXML
+    private Button remove_any_by_healthButton;
+    @FXML
+    private Button remove_lower_keyButton;
+    @FXML
+    private Button remove_greater_keyButton;
+    @FXML
+    private Button count_less_than_healthButton;
+    @FXML
+    private Button replace_if_loweButton;
+    @FXML
     private Tooltip infoButtonTooltip;
     @FXML
     private Tooltip addButtonTooltip;
@@ -122,6 +136,17 @@ public class ContentController implements Initializable {
     private Map<Long, Text> textMap;
     private Map<String, Color> userColorMap;
     private Random randomGenerator;
+    private String NameLabel;
+    private String XLabel;
+    private String YLabel;
+    private String HealthLabel;
+    private String ChapterNameLabel;
+    private String ChapterSizeLabel;
+    private String ChapterLegionLabel;
+    private String CategoryLabel;
+    private String WeaponLabel;
+    private String MeleeWeaponLabel;
+    private String KeyLabel;
 
 
 
@@ -156,13 +181,17 @@ public class ContentController implements Initializable {
         spaceMarineTable.setItems(listr);
         collection = Client.AskCollection("localhost", 5001);
         refreshCollection(collection);
-        localeMap.put("Русский", new Locale("ru", "RU"));
+        localeMap.put("Russian", new Locale("ru", "RU"));
+        localeMap.put("Spanish", new Locale("sp", "PR"));
+        localeMap.put("Germany", new Locale("ge", "Ge"));
+        localeMap.put("Catalan", new Locale("ctl", "Ctl"));
         languageComboBox.setItems(FXCollections.observableArrayList(localeMap.keySet()));
     }
 
     private void bindGuiLanguage(){
         resourceFactory.setResources(ResourceBundle.getBundle(MainClient.BUNDLE, localeMap.get(languageComboBox.getSelectionModel().getSelectedItem())));
         idColumn.textProperty().bind(resourceFactory.getStringBinding("IdColumn"));
+        keyColumn.textProperty().bind(resourceFactory.getStringBinding("KeyColumn"));
         ownerColumn.textProperty().bind(resourceFactory.getStringBinding("OwnerColumn"));
         creationDateColumn.textProperty().bind(resourceFactory.getStringBinding("CreationDateColumn"));
         nameColumn.textProperty().bind(resourceFactory.getStringBinding("NameColumn"));
@@ -173,12 +202,21 @@ public class ContentController implements Initializable {
         weaponTypeColumn.textProperty().bind(resourceFactory.getStringBinding("WeaponColumn"));
         meleeWeaponColumn.textProperty().bind(resourceFactory.getStringBinding("MeleeWeaponColumn"));
         chapterNameColumn.textProperty().bind(resourceFactory.getStringBinding("ChapterNameColumn"));
+        chapterLegionName.textProperty().bind(resourceFactory.getStringBinding("ChapterLegionColumn"));
         chapterSizeColumn.textProperty().bind(resourceFactory.getStringBinding("ChapterSizeColumn"));
 
         tableTab.textProperty().bind(resourceFactory.getStringBinding("TableTab"));
         canvasTab.textProperty().bind(resourceFactory.getStringBinding("CanvasTab"));
 
         infoButton.textProperty().bind(resourceFactory.getStringBinding("InfoButton"));
+        deleteSelectedButton.textProperty().bind(resourceFactory.getStringBinding("deleteSelectedButton"));
+        remove_any_by_healthButton.textProperty().bind(resourceFactory.getStringBinding("remove_any_by_healthButton"));
+        updateSelectedButton.textProperty().bind(resourceFactory.getStringBinding("updateSelectedButton"));
+        remove_lower_keyButton.textProperty().bind(resourceFactory.getStringBinding("remove_lower_keyButton"));
+        remove_greater_keyButton.textProperty().bind(resourceFactory.getStringBinding("remove_greater_keyButton"));
+        count_less_than_healthButton.textProperty().bind(resourceFactory.getStringBinding("count_less_than_healthButton"));
+        replace_if_loweButton.textProperty().bind(resourceFactory.getStringBinding("replace_if_loweButton"));
+
         addButton.textProperty().bind(resourceFactory.getStringBinding("AddButton"));
         updateButton.textProperty().bind(resourceFactory.getStringBinding("UpdateButton"));
         removeButton.textProperty().bind(resourceFactory.getStringBinding("RemoveButton"));
@@ -191,7 +229,20 @@ public class ContentController implements Initializable {
         removeButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("RemoveButtonTooltip"));
         clearButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("ClearButtonTooltip"));
         executeScriptButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("ExecuteScriptButtonTooltip"));
-        refreshButtonTooltip.textProperty().bind(resourceFactory.getStringBinding("RefreshButtonTooltip"));
+
+
+
+        NameLabel = resourceFactory.getStringBinding("NameLabel").toString();
+        XLabel = resourceFactory.getStringBinding("XLabel").toString();
+        YLabel = resourceFactory.getStringBinding("YLabel").toString();
+        HealthLabel = resourceFactory.getStringBinding("HealthLabel").toString();
+        ChapterNameLabel = resourceFactory.getStringBinding("ChapterNameLabel").toString();
+        ChapterSizeLabel = resourceFactory.getStringBinding("ChapterSizeLabel").toString();
+        ChapterLegionLabel = resourceFactory.getStringBinding("ChapterLegionLabel").toString();
+        CategoryLabel = resourceFactory.getStringBinding("CategoryLabel").toString();
+        WeaponLabel = resourceFactory.getStringBinding("WeaponLabel").toString();
+        MeleeWeaponLabel = resourceFactory.getStringBinding("MeleeWeaponLabel").toString();
+        KeyLabel = resourceFactory.getStringBinding("KeyLabel").toString();
     }
     public void initLangs(ObservableResourceFactory resourceFactory) {
         this.resourceFactory = resourceFactory;
@@ -302,7 +353,7 @@ public class ContentController implements Initializable {
             Parent root = content.load();
             InfoController infoController = content.getController();
             stage.setTitle("Info");
-            stage.setScene(new Scene(root, 700, 150));
+            stage.setScene(new Scene(root, 700, 331));
             stage.show();
         }catch (IOException e){
             e.printStackTrace();
@@ -339,7 +390,18 @@ public class ContentController implements Initializable {
             }
 
         }catch (IOException e){
-            e.printStackTrace();
+
+        }
+    }
+    @FXML
+    private void deleteSelected(){
+        try {
+            String key = String.valueOf(spaceMarineTable.getSelectionModel().getSelectedItem().getKey());
+            client.remove(key, getUsername());
+            refreshCollection(client.askCollection());
+
+        }catch (Exception e){
+
         }
     }
 
@@ -397,7 +459,7 @@ public class ContentController implements Initializable {
             removeController.setContentController(this);
             removeController.setUsername(getUsername());
             stage.setTitle("RemoveByKey");
-            stage.setScene(new Scene(root, 500, 361));
+            stage.setScene(new Scene(root, 350, 400));
             stage.show();
         }catch (IOException e){
             e.printStackTrace();
@@ -409,7 +471,7 @@ public class ContentController implements Initializable {
         try {
             Stage stage = new Stage();
             FXMLLoader text = new FXMLLoader();
-            text.setLocation(getClass().getResource("TextField.fxml"));
+            text.setLocation(getClass().getResource("Health.fxml"));
             Parent root = text.load();
             TextController textController = text.getController();
             textController.setClient(client);
@@ -417,7 +479,7 @@ public class ContentController implements Initializable {
             textController.setUsername(getUsername());
             stage.setTitle("Remove any element with health");
             textController.setTextField("Remove any element with health");
-            stage.setScene(new Scene(root, 500, 361));
+            stage.setScene(new Scene(root, 466, 526));
             stage.show();
         }catch (IOException e){
             e.printStackTrace();
@@ -517,7 +579,7 @@ public class ContentController implements Initializable {
         try {
             Stage stage = new Stage();
             FXMLLoader text = new FXMLLoader();
-            text.setLocation(getClass().getResource("TextField.fxml"));
+            text.setLocation(getClass().getResource("Script.fxml"));
             Parent root = text.load();
             TextController textController = text.getController();
             textController.setClient(client);
