@@ -362,7 +362,7 @@ public class ContentController implements Initializable {
     @FXML
     private void updateSelected(){
         try {
-            if (spaceMarineTable.getSelectionModel().getSelectedItem().getOwner().equals(getUsername())) {
+
                 Stage stage = new Stage();
                 FXMLLoader content = new FXMLLoader();
                 content.setLocation(getClass().getResource("Element.fxml"));
@@ -387,7 +387,6 @@ public class ContentController implements Initializable {
                 stage.setTitle("UpdateElement");
                 stage.setScene(new Scene(root, 510, 600));
                 stage.show();
-            }
 
         }catch (IOException e){
 
